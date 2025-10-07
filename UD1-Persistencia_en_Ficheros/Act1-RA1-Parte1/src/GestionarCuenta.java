@@ -55,6 +55,7 @@ public class GestionarCuenta {
                     c.mostrarInformacion();
                     break;
                 case 4:
+                    System.out.println("Hasta pronto. Cerrando programa...");
                     break;
                 default:
                     System.out.println("Opcion inválida, introduce un numero entero.");
