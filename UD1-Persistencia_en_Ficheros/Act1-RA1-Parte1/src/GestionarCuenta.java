@@ -53,6 +53,13 @@ public class GestionarCuenta {
                     break;
                 case 3:
                     c.mostrarInformacion();
+                    break;
+                case 4:
+                    break;
+                default:
+                    System.out.println("Opcion inválida, introduce un numero entero.");
+                    menu();
+                    return;
             }
         } while (opcion != 4);
     }
