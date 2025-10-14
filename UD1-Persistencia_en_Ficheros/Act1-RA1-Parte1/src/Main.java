@@ -12,6 +12,10 @@ public class Main {
 
             // Si el archivo 'cuenta.dat' no existe, se crea
             if (!archivo.exists()) {
+                // Creo el archivo y su directorio si no existe
+                archivo.getParentFile().mkdirs();
+                archivo.createNewFile();
+                
                 // Pregunto el nombre al usuario (cliente)
                 System.out.print("Introduce tu nombre: ");
                 String nombre = scanner.nextLine();
