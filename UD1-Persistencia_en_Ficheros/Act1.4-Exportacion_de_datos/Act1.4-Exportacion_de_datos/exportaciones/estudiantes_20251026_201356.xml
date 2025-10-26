@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<clase>
+    <metadata>
+        <version>1.0</version>
+        <fecha>26/10/2025 20:13:56</fecha>
+        <totalEstudiantes>5</totalEstudiantes>
+    </metadata>
+    <estudiantes>
+        <estudiante id="1">
+            <nombre>Lucía</nombre>
+            <apellidos>García López</apellidos>
+            <edad>20</edad>
+            <nota>8.50</nota>
+        </estudiante>
+        <estudiante id="2">
+            <nombre>Carlos</nombre>
+            <apellidos>Martínez Ruiz</apellidos>
+            <edad>22</edad>
+            <nota>7.20</nota>
+        </estudiante>
+        <estudiante id="3">
+            <nombre>Ana</nombre>
+            <apellidos>Sánchez Fernández</apellidos>
+            <edad>19</edad>
+            <nota>9.00</nota>
+        </estudiante>
+        <estudiante id="4">
+            <nombre>Miguel</nombre>
+            <apellidos>Pérez Gómez</apellidos>
+            <edad>21</edad>
+            <nota>6.80</nota>
+        </estudiante>
+        <estudiante id="5">
+            <nombre>Sofía</nombre>
+            <apellidos>Hernández Díaz</apellidos>
+            <edad>20</edad>
+            <nota>8.00</nota>
+        </estudiante>
+    </estudiantes>
+    <resumen>
+        <notaMedia>7.90</notaMedia>
+        <notaMaxima>9.00</notaMaxima>
+        <notaMinima>6.80</notaMinima>
+    </resumen>
+</clase>

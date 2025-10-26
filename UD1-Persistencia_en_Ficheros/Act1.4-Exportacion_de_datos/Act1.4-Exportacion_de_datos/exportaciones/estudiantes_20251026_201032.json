@@ -1,0 +1,53 @@
+{
+    "clase": {
+        "metadata": {
+            "version": "1.0",
+            "fecha": "26/10/2025 20:10:32",
+            "totalEstudiantes": 5
+        },
+        "estudiantes": [
+            {
+                "id": "1",
+                "nombre": "Lucía",
+                "apellidos": "García López",
+                "edad": "20",
+                "nota": "8.50"
+            },
+            {
+                "id": "2",
+                "nombre": "Carlos",
+                "apellidos": "Martínez Ruiz",
+                "edad": "22",
+                "nota": "7.20"
+            },
+            {
+                "id": "3",
+                "nombre": "Ana",
+                "apellidos": "Sánchez Fernández",
+                "edad": "19",
+                "nota": "9.00"
+            },
+            {
+                "id": "4",
+                "nombre": "Miguel",
+                "apellidos": "Pérez Gómez",
+                "edad": "21",
+                "nota": "6.80"
+            },
+            {
+                "id": "5",
+                "nombre": "Sofía",
+                "apellidos": "Hernández Díaz",
+                "edad": "20",
+                "nota": "8.00"
+            }
+        ],
+        "estadisticas": {
+            "notaMedia": 7.90,
+            "notaMaxima": 9.00,
+            "notaMinima": 6.80,
+            "aprobados": 5,
+            "suspensos": 0
+        }
+    }
+}

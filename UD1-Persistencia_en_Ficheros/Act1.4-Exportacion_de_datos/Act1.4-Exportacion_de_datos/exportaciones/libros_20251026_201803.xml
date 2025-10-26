@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<biblioteca>
+    <informacion>
+        <nombre>Biblioteca Municipal</nombre>
+        <fecha>26/10/2025</fecha>
+        <totalLibros>16</totalLibros>
+    </informacion>
+    <categorias>
+        <categoria nombre="Ficción" totalLibros="7">
+            <libro isbn="978-84-123" disponible="true">
+                <titulo>El Quijote</titulo>
+                <autor>Miguel de Cervantes</autor>
+                <año>1605</año>
+                <paginas>863</paginas>
+                <prestamos>150</prestamos>
+            </libro>
+            <libro isbn="978-84-456" disponible="false">
+                <titulo>Cien años de soledad</titulo>
+                <autor>Gabriel García Márquez</autor>
+                <año>1967</año>
+                <paginas>471</paginas>
+                <prestamos>98</prestamos>
+            </libro>
+            <libro isbn="978-84-303" disponible="true">
+                <titulo>Los pilares de la Tierra</titulo>
+                <autor>Ken Follett</autor>
+                <año>1989</año>
+                <paginas>1076</paginas>
+                <prestamos>110</prestamos>
+            </libro>
+            <libro isbn="978-84-606" disponible="true">
+                <titulo>Fundación</titulo>
+                <autor>Isaac Asimov</autor>
+                <año>1951</año>
+                <paginas>320</paginas>
+                <prestamos>135</prestamos>
+            </libro>
+            <libro isbn="978-84-707" disponible="false">
+                <titulo>Un mundo feliz</titulo>
+                <autor>Aldous Huxley</autor>
+                <año>1932</año>
+                <paginas>288</paginas>
+                <prestamos>90</prestamos>
+            </libro>
+            <libro isbn="978-84-010" disponible="true">
+                <titulo>El nombre de la rosa</titulo>
+                <autor>Umberto Eco</autor>
+                <año>1980</año>
+                <paginas>672</paginas>
+                <prestamos>120</prestamos>
+            </libro>
+            <libro isbn="978-84-111" disponible="true">
+                <titulo>Crónica de una muerte anunciada</titulo>
+                <autor>Gabriel García Márquez</autor>
+                <año>1981</año>
+                <paginas>128</paginas>
+                <prestamos>80</prestamos>
+            </libro>
+            <estadisticas>
+                <totalPrestamos>783</totalPrestamos>
+                <prestamosMedio>111.86</prestamosMedio>
+            </estadisticas>
+        </categoria>
+        <categoria nombre="Historia" totalLibros="4">
+            <libro isbn="978-84-202" disponible="false">
+                <titulo>Historia universal</titulo>
+                <autor>VV.AA.</autor>
+                <año>2005</año>
+                <paginas>590</paginas>
+                <prestamos>60</prestamos>
+            </libro>
+            <libro isbn="978-84-404" disponible="true">
+                <titulo>Sapiens: De animales a dioses</titulo>
+                <autor>Yuval Noah Harari</autor>
+                <año>2011</año>
+                <paginas>496</paginas>
+                <prestamos>85</prestamos>
+            </libro>
+            <libro isbn="978-84-909" disponible="false">
+                <titulo>La Segunda Guerra Mundial</titulo>
+                <autor>Antony Beevor</autor>
+                <año>2012</año>
+                <paginas>1152</paginas>
+                <prestamos>58</prestamos>
+            </libro>
+            <libro isbn="978-84-313" disponible="true">
+                <titulo>Guns, Germs, and Steel</titulo>
+                <autor>Jared Diamond</autor>
+                <año>1997</año>
+                <paginas>528</paginas>
+                <prestamos>70</prestamos>
+            </libro>
+            <estadisticas>
+                <totalPrestamos>273</totalPrestamos>
+                <prestamosMedio>68.25</prestamosMedio>
+            </estadisticas>
+        </categoria>
+        <categoria nombre="Ciencia" totalLibros="5">
+            <libro isbn="978-84-789" disponible="true">
+                <titulo>Breve historia del tiempo</titulo>
+                <autor>Stephen Hawking</autor>
+                <año>1988</año>
+                <paginas>256</paginas>
+                <prestamos>73</prestamos>
+            </libro>
+            <libro isbn="978-84-101" disponible="true">
+                <titulo>Introducción a la programación</titulo>
+                <autor>Ana Torres</autor>
+                <año>2010</año>
+                <paginas>350</paginas>
+                <prestamos>45</prestamos>
+            </libro>
+            <libro isbn="978-84-505" disponible="false">
+                <titulo>La teoría del todo</titulo>
+                <autor>Stephen Hawking</autor>
+                <año>2002</año>
+                <paginas>224</paginas>
+                <prestamos>40</prestamos>
+            </libro>
+            <libro isbn="978-84-808" disponible="true">
+                <titulo>El origen de las especies</titulo>
+                <autor>Charles Darwin</autor>
+                <año>1859</año>
+                <paginas>502</paginas>
+                <prestamos>51</prestamos>
+            </libro>
+            <libro isbn="978-84-212" disponible="false">
+                <titulo>Cosmos</titulo>
+                <autor>Carl Sagan</autor>
+                <año>1980</año>
+                <paginas>384</paginas>
+                <prestamos>62</prestamos>
+            </libro>
+            <estadisticas>
+                <totalPrestamos>271</totalPrestamos>
+                <prestamosMedio>54.20</prestamosMedio>
+            </estadisticas>
+        </categoria>
+    </categorias>
+    <resumenGlobal>
+        <totalCategorias>3</totalCategorias>
+        <totalLibros>16</totalLibros>
+        <librosDisponibles>10</librosDisponibles>
+        <librosPrestados>6</librosPrestados>
+    </resumenGlobal>
+</biblioteca>

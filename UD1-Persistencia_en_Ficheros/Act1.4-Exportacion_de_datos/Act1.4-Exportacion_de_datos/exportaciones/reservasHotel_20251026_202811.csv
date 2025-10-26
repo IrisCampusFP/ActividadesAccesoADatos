@@ -1,0 +1,15 @@
+ID;ClienteNombre;ClienteEmail;ClienteTelefono;HabitacionNum;TipoHabitacion;PrecioNoche;FechaEntrada;FechaSalida;Noches;PrecioTotal;Estado
+1;Juan García;juan@email.com;666111222;101;Doble;90.00;20/10/2025;23/10/2025;3;270.00;Confirmada
+2;María López;maria@email.com;666222333;205;Suite;200.00;21/10/2025;25/10/2025;4;800.00;Confirmada
+3;Pedro Sánchez;pedro@email.com;666333444;303;Individual;50.00;18/10/2025;20/10/2025;2;100.00;Completada
+4;Juan García;juan@email.com;666111222;404;Doble;80.00;22/10/2025;24/10/2025;2;160.00;Cancelada
+5;María López;maria@email.com;666222333;303;Individual;50.00;25/10/2025;28/10/2025;3;150.00;Confirmada
+6;Pedro Sánchez;pedro@email.com;666333444;505;Suite;200.00;26/10/2025;29/10/2025;3;600.00;Confirmada
+7;Juan García;juan@email.com;666111222;101;Doble;90.00;28/10/2025;31/10/2025;3;270.00;Completada
+8;María López;maria@email.com;666222333;404;Doble;80.00;27/10/2025;30/10/2025;3;240.00;Confirmada
+9;Pedro Sánchez;pedro@email.com;666333444;205;Suite;200.00;29/10/2025;01/11/2025;3;600.00;Confirmada
+10;Juan García;juan@email.com;666111222;303;Individual;50.00;30/10/2025;01/11/2025;2;100.00;Confirmada
+
+# Total reservas: 10
+# Total ingresos (reservas): 3290.00
+# Confirmadas: 7 | Canceladas: 1 | Completadas: 2

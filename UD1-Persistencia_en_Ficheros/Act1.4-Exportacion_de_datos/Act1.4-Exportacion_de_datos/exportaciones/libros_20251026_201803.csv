@@ -1,0 +1,32 @@
+# BIBLIOTECA MUNICIPAL - CATÁLOGO DE LIBROS
+
+# CATEGORÍA: Ficción
+
+ISBN;Título;Autor;Año;Páginas;Disponible;Préstamos
+978-84-123;El Quijote;Miguel de Cervantes;1605;863;true;
+978-84-456;Cien años de soledad;Gabriel García Márquez;1967;471;false;b
+978-84-303;Los pilares de la Tierra;Ken Follett;1989;1076;true;n
+978-84-606;Fundación;Isaac Asimov;1951;320;true;
+978-84-707;Un mundo feliz;Aldous Huxley;1932;288;false;Z
+978-84-010;El nombre de la rosa;Umberto Eco;1980;672;true;x
+978-84-111;Crónica de una muerte anunciada;Gabriel García Márquez;1981;128;true;P
+# Subtotal Ficción: 7 libros, 783 préstamos
+
+# CATEGORÍA: Historia
+
+ISBN;Título;Autor;Año;Páginas;Disponible;Préstamos
+978-84-202;Historia universal;VV.AA.;2005;590;false;<
+978-84-404;Sapiens: De animales a dioses;Yuval Noah Harari;2011;496;true;U
+978-84-909;La Segunda Guerra Mundial;Antony Beevor;2012;1152;false;:
+978-84-313;Guns, Germs, and Steel;Jared Diamond;1997;528;true;F
+# Subtotal Historia: 4 libros, 273 préstamos
+
+# CATEGORÍA: Ciencia
+
+ISBN;Título;Autor;Año;Páginas;Disponible;Préstamos
+978-84-789;Breve historia del tiempo;Stephen Hawking;1988;256;true;I
+978-84-101;Introducción a la programación;Ana Torres;2010;350;true;-
+978-84-505;La teoría del todo;Stephen Hawking;2002;224;false;(
+978-84-808;El origen de las especies;Charles Darwin;1859;502;true;3
+978-84-212;Cosmos;Carl Sagan;1980;384;false;>
+# Subtotal Ciencia: 5 libros, 271 préstamos
