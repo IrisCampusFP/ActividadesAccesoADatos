@@ -9,8 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static utils.Utils.crearDirectorio;
-import static utils.Utils.formatearDouble;
+import static utils.Utils.*;
 
 public class ExportadorMovimientosXML {
     static final String CARPETA = "exportaciones";
@@ -22,19 +21,6 @@ public class ExportadorMovimientosXML {
 
     private static final String NODOPADRE = "listado_de_movimientos";
     private static final String NODOHIJO = "movimientos";
-
-    static String escaparXML(String texto) {
-        if (texto == null || texto.isEmpty()) {
-            return "";
-        }
-
-        // IMPORTANTE: El orden importa - escapar & primero
-        return texto.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&apos;");
-    }
 
     public static boolean exportar(ArrayList<Movimiento> movimientos, String nombreArchivo) {
         try {

@@ -7,28 +7,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static utils.Utils.crearDirectorio;
-import static utils.Utils.formatearDouble;
+import static utils.Utils.*;
 
 public class ExportadorMovimientosCSV {
     static final String CARPETA = "exportaciones";
     static String fecha = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     private static final String SEPARADOR = ";"; // Separador CSV
-
-
-    // Escapar texto para CSV
-    static String escaparCSV(String texto) {
-        if (texto == null || texto.isEmpty()) {
-            return "";
-        }
-        // Si contiene el separador, comillas o saltos de línea, debemos escapar
-        if (texto.contains(SEPARADOR) || texto.contains("\"") || texto.contains("\n")) {
-            // Duplicamos las comillas y encerramos todo entre comillas
-            return "\"" + texto.replace("\"", "\"\"") + "\"";
-        }
-
-        return texto;
-    }
 
     public static boolean exportar(ArrayList<Movimiento> movimientos, String nombreArchivo) {
 

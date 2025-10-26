@@ -12,8 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static utils.Utils.crearDirectorio;
-import static utils.Utils.formatearDouble;
+import static utils.Utils.*;
 
 public class ExportadorCuentaJSON {
     static final String CARPETA = "exportaciones";
@@ -25,18 +24,6 @@ public class ExportadorCuentaJSON {
     private static final String INDENTACION4 = INDENTACION2 + INDENTACION2;
 
     private static final String NODOPADRE = "cuenta";
-
-    private static String escaparJSON(String texto) {
-        if (texto == null || texto.isEmpty()) {
-            return "";
-        }
-        // IMPORTANTE: El orden importa - escapar \ primero
-        return texto.replace("\\", "\\\\")   // Barra invertida primero
-                .replace("\"", "\\\"")    // Comillas dobles
-                .replace("\n", "\\n")     // Nueva línea
-                .replace("\r", "\\r")     // Retorno de carro
-                .replace("\t", "\\t");    // Tabulador
-    }
 
     public static boolean exportar(Cuenta cuenta, String nombreArchivo) {
         ArrayList<Movimiento> movimientos = cuenta.getMovimientos();

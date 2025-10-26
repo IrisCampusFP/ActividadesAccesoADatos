@@ -10,8 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static utils.Utils.crearDirectorio;
-import static utils.Utils.formatearDouble;
+import static utils.Utils.*;
 
 public class ExportadorMovimientosJSON {
     static final String CARPETA = "exportaciones";
@@ -24,18 +23,6 @@ public class ExportadorMovimientosJSON {
 
     private static final String NODOPADRE = "listado_de_movimientos";
     private static final String NODOHIJO = "movimientos";
-
-    private static String escaparJSON(String texto) {
-        if (texto == null || texto.isEmpty()) {
-            return "";
-        }
-        // IMPORTANTE: El orden importa - escapar \ primero
-        return texto.replace("\\", "\\\\")   // Barra invertida primero
-                .replace("\"", "\\\"")    // Comillas dobles
-                .replace("\n", "\\n")     // Nueva línea
-                .replace("\r", "\\r")     // Retorno de carro
-                .replace("\t", "\\t");    // Tabulador
-    }
 
     public static boolean exportar(ArrayList<Movimiento> movimientos, String nombreArchivo) {
         // VALIDACIONES

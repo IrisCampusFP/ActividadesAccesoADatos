@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static utils.Utils.crearDirectorio;
+import static utils.Utils.escaparXML;
 import static utils.Utils.formatearDouble;
 
 public class ExportadorCuentaXML {
@@ -26,19 +27,6 @@ public class ExportadorCuentaXML {
     private static final String INDENTACION3 = INDENTACION2 + INDENTACION;
 
     private static final String NODOPADRE = "cuenta";
-
-    static String escaparXML(String texto) {
-        if (texto == null || texto.isEmpty()) {
-            return "";
-        }
-
-        // IMPORTANTE: El orden importa - escapar & primero
-        return texto.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&apos;");
-    }
 
     public static boolean exportar(Cuenta cuenta, String nombreArchivo) {
         try {
