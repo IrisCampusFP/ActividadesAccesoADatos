@@ -5,7 +5,7 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0.33-00AEEF?logo=mysql&logoColor=white)
 ![HikariCP](https://img.shields.io/badge/HikariCP-5.1.0-8E44AD)
 ![SLF4J](https://img.shields.io/badge/SLF4J-2.0.9-lightgrey)
-![Estado](https://img.shields.io/badge/Estado-Terminado-brightgreen)
+![Estado](https://img.shields.io/badge/Estado-Terminado-2E7D32)
 
 ## Estructura completa del proyecto
 
