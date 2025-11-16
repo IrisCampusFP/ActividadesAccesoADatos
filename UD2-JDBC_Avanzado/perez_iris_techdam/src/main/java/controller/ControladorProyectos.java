@@ -78,7 +78,7 @@ public class ControladorProyectos {
 
         // Si presupuesto del proyecto origen es menor al monto a transferir
         if (proyectoDAO.consultarPresupuesto(idProyectoOrigen).compareTo(monto) < 0) {
-            System.out.println("No hay suficiente presupuesto en el proyecto '" + idProyectoOrigen);
+            System.out.println("No hay suficiente presupuesto en el proyecto " + idProyectoOrigen);
             return;
         }
 

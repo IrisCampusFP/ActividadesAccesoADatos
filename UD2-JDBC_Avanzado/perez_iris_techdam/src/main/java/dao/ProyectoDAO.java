@@ -172,7 +172,7 @@ public class ProyectoDAO {
     public BigDecimal consultarPresupuesto(int idProyecto){
 
         try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT presupuesto FROM proyectos WHERE id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT presupuesto FROM proyectos WHERE id_proyecto = ?")) {
 
             stmt.setInt(1, idProyecto);
             ResultSet rs = stmt.executeQuery();

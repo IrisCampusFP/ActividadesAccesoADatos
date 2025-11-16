@@ -21,6 +21,7 @@ public class ControladorPrincipal {
     private ControladorEmpleados ce = new ControladorEmpleados();
     private ControladorProyectos cp = new ControladorProyectos();
     private TransaccionesService transacciones = new TransaccionesService();
+    ProyectoDAO proyectoDAO = new ProyectoDAO();
 
     public void menuPrincipal() {
         while (true) {
@@ -55,6 +56,12 @@ public class ControladorPrincipal {
         // Se solicita el ID del proyecto
         System.out.print("Introduce el id del proyecto al que quieras agregar empleados: ");
         int idProyecto = leerEntero();
+
+        // Comprobación de que el proyecto existe
+        if (!proyectoDAO.existeProyecto(idProyecto)) {
+            System.out.println("No existe ningún proyecto con id '" + idProyecto + "'.");
+            return;
+        }
 
         // Se solicitan los ids de los empleados a agregar
         List<Integer> empleados = new ArrayList<>();
