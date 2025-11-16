@@ -67,14 +67,14 @@ public class DatabaseConfig {
 
             // Creación del DataSource (pool) a partir de la configuración anterior.
             dataSource = new HikariDataSource(config);
-            System.out.println("Pool de conexiones HikariCP inicializado correctamente.\n");
+            System.out.println("Pool de conexiones HikariCP inicializado correctamente.");
         } catch (Exception e) {
             /*
              * Se lanza una RuntimeException para detener el arranque si el pool
              * no puede inicializarse. En entornos productivos se recomienda un
              * manejo más fino (log, métricas, reintento, fallback).
              */
-            throw new RuntimeException("Error al inicializar el pool de conexiones\n", e);
+            throw new RuntimeException("Error al inicializar el pool de conexiones", e);
         }
     }
 
