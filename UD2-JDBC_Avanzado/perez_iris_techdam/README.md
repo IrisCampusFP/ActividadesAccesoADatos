@@ -1,11 +1,11 @@
 # Proyecto TechDAM - JDBC Avanzado 
 
 ![Java](https://img.shields.io/badge/Java-21-red?logo=openjdk)
-![Maven](https://img.shields.io/badge/Apache%20Maven-Build-blue?logo=apachemaven)
-![MySQL](https://img.shields.io/badge/MySQL-8.0.33-4479A1?logo=mysql)
-![HikariCP](https://img.shields.io/badge/HikariCP-5.1.0-31A8FF)
+![Maven](https://img.shields.io/badge/Apache%20Maven-Build-0B3D91?logo=apachemaven&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0.33-00AEEF?logo=mysql&logoColor=white)
+![HikariCP](https://img.shields.io/badge/HikariCP-5.1.0-8E44AD)
 ![SLF4J](https://img.shields.io/badge/SLF4J-2.0.9-lightgrey)
-![Estado](https://img.shields.io/badge/Estado-En%20desarrollo-yellow)
+![Estado](https://img.shields.io/badge/Estado-Terminado-brightgreen)
 
 ## Estructura completa del proyecto
 
