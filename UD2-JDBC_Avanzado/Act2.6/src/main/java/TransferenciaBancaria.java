@@ -52,7 +52,7 @@ public class TransferenciaBancaria {
                 ingresar.executeUpdate();
 
                 // *** FUERZO UN ERROR DE PRUEBA
-                if (true) throw new SQLException("Error forzado para probar savepoint");
+                //if (true) throw new SQLException("Error forzado para probar savepoint");
 
                 // 5. Registro del log del ingreso (segundo paso de la transacción)
                 insertarLog.setString(1, "Ingresados " + cantidadTransferida + " € en la cuenta " + idCuentaDestino);
