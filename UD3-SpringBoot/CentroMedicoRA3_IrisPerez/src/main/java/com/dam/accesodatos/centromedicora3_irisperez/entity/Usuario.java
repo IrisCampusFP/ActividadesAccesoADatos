@@ -50,14 +50,9 @@ public class Usuario {
     )
     private Set<Rol> roles = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "pacientes",
-            joinColumns = @JoinColumn(name = "medico_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
-    )
-    private List<Paciente> pacientes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "medico", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Paciente> pacientes = new ArrayList<>();
 
 
     /*

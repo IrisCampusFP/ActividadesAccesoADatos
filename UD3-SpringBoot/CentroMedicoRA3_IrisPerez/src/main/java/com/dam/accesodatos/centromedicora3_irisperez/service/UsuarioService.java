@@ -52,7 +52,6 @@ public class UsuarioService {
         boolean passwordCorrecta = usuario.checkPassword(password);
 
         if (passwordCorrecta) {
-            usuarioRepository.save(usuario);
             return true;
         }
         return false;

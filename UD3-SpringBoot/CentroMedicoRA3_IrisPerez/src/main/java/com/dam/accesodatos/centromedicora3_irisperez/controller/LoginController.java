@@ -28,8 +28,8 @@ public class LoginController {
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<UsuarioDTO> inicioSesion(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) {
-        if (usuarioService.comprobarPassword(loginRequestDTO.getPassword(), loginRequestDTO.getUsername())) {
-            Usuario usuario = usuarioService.obtenerUsuarioPorUsername(loginRequestDTO.getUsername());
+        if (usuarioService.comprobarPassword(loginRequestDTO.getPassword(), loginRequestDTO.getEmail())) {
+            Usuario usuario = usuarioService.obtenerUsuarioPorEmail(loginRequestDTO.getEmail());
 
             Set<Rol> roles = new HashSet<>(usuario.getRoles());
             List<Paciente> pacientes = usuario.getPacientes();

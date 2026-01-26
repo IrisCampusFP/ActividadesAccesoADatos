@@ -40,9 +40,10 @@ public class Paciente {
     @Column(name = "historial")
     private String historial;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medico_id")
-    @ToString.Exclude @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Usuario medico;
 
 

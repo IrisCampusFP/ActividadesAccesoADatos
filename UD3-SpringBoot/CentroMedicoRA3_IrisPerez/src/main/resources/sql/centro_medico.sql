@@ -24,7 +24,7 @@ CREATE TABLE roles (
 
 -- Tabla de asociación rol_usuario
 CREATE TABLE rol_usuario (
-    id_usuario BIGINT AUTO_INCREMENT NOT NULL,
+    id_usuario BIGINT NOT NULL,
     id_rol BIGINT NOT NULL,
     PRIMARY KEY (id_usuario, id_rol),
     CONSTRAINT fk_rol_usuario_usuario FOREIGN KEY (id_usuario)
@@ -52,7 +52,7 @@ CREATE TABLE pacientes (
 
 -- INSERCIÓN DE DATOS DE PRUEBA
 
--- Usuarios de ejemplo
+-- Usuarios de ejemplo (contraseña: 1234)
 INSERT INTO usuarios (username, email, password_hash, nombre, activo, fecha_creacion) VALUES
     ('irisperezz', 'iris@gmail.com', '$2a$10$WHUWMirDJuVxCokGxvVnoOal6ffgY4sjJ4EXuJtFtakLj/ygutbBe', 'Iris Perez',
      TRUE,NOW()),
@@ -88,3 +88,5 @@ INSERT INTO pacientes (nombre, apellidos, dni, telefono, fecha_nacimiento, histo
 
     ('Juan', 'Arroyo Martin', '77755544A', '634234634', '1976-06-12',
      'texto ejemplo historial medico', 3, TRUE, NOW());
+
+select * from usuarios;
