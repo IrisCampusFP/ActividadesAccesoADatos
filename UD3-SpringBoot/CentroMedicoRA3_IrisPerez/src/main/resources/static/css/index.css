@@ -1,0 +1,39 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #1a1a2e;
+    color: #ffffff;
+}
+
+.login-container {
+    background-color: #22223b;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+h2.text-gradient-primary {
+    background: linear-gradient(45deg, #6a5acd, #ff69b4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.form-control-dark {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+.form-control-dark::placeholder {
+    color: #cccccc;
+}
+
+.btn-gradient-primary {
+    background: linear-gradient(45deg, #6a5acd, #ff69b4);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-gradient-primary:hover {
+    background: linear-gradient(45deg, #5a4bb7, #ff4da6);
+    transform: translateY(-2px);
+}

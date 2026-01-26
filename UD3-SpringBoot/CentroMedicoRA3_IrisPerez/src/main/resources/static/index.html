@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio de sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body class="bg-dark text-light">
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="login-container card bg-dark border-0 shadow-lg p-5 rounded-4" style="max-width: 450px; width: 100%;">
+        <h2 class="text-center mb-5 text-gradient-primary">Iniciar Sesión</h2>
+
+        <form method="post" id="formulario">
+
+            <div class="mb-4">
+                <label for="username" class="form-label text-light fw-semibold">Username</label>
+                <input type="username" class="form-control form-control-dark text-light bg-secondary border-0" id="username" placeholder="Introduce aquí tu nombre de usuario" required>
+            </div>
+
+            <div class="mb-5">
+                <label for="password" class="form-label text-light fw-semibold">Contraseña</label>
+                <input type="password" class="form-control form-control-dark text-light bg-secondary border-0" id="password" placeholder="Introduce aquí tu contraseña" required>
+            </div>
+
+            <div class="d-grid mt-3">
+                <button type="submit" class="btn btn-gradient-primary btn-lg">Acceder</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="js/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
