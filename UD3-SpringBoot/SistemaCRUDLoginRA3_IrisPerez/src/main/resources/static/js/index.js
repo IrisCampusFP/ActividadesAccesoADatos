@@ -30,6 +30,6 @@ formulario.addEventListener("submit", (e) => {
     }).catch((error) => {
         // En caso de error:
         console.error("Fallo en login:", error);
-        alert("No se ha podido iniciar sesión. Email o contraseña incorrectos.")
+        alert("No se ha podido iniciar sesión.")
     });
 })
