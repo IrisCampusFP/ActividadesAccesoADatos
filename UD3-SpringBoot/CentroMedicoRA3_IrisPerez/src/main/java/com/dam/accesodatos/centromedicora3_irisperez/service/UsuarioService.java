@@ -43,24 +43,44 @@ public class UsuarioService {
 
         Usuario usuario = obtenerUsuarioPorEmail(email);
 
+        int numMaxIntentosFallidos = 3;
+
         // Si el usuario está inactivo, no puede acceder
         if (!usuario.getActivo()) {
             throw new IllegalStateException("El usuario está inactivo");
         }
 
         // Comprobar contraseña
-        boolean passwordCorrecta = usuario.checkPassword(password);
-
-        if (passwordCorrecta) {
+        if (usuario.checkPassword(password)) {
+            usuario.setIntentosFallidos(0);
+            usuarioRepository.save(usuario);
             return true;
         }
+
+        // Si la contraseña no es correcta aumenta el numero de intentos fallidos
+        int intentosFallidos = (usuario.getIntentosFallidos() != null) ? usuario.getIntentosFallidos() : 0;
+
+        intentosFallidos++;
+
+        usuario.setIntentosFallidos(intentosFallidos);
+
+        // Se guarda el numero de intentos fallidos
+        usuarioRepository.save(usuario);
+
+        // Si llega a 3 fallidos, el usuario se bloquea
+        if (intentosFallidos >= numMaxIntentosFallidos) {
+            usuario.setActivo(false);
+            usuarioRepository.save(usuario);
+            throw new IllegalStateException("Usuario bloqueado. Has superado el número máximo de intentos fallidos (" + numMaxIntentosFallidos + ")");
+        }
+
         return false;
     }
 
 
     @Transactional(readOnly = true)
     public Usuario obtenerUsuarioPorEmail(String email) {
-        return usuarioRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No existe ningún usuario con el email indicado"));
+        return usuarioRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No existe ningún usuario registrado con ese email."));
     }
 
 

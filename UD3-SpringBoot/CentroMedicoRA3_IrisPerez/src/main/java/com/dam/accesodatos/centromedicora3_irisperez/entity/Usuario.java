@@ -1,11 +1,14 @@
 package com.dam.accesodatos.centromedicora3_irisperez.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,7 +20,9 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class Usuario implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +47,11 @@ public class Usuario {
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
+    // Atributo que no existe en la BD, solo para controlar la logica
+    // de intentos fallidos en el inicio de sesión
+    @Transient
+    private Integer intentosFallidos;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "rol_usuario",
@@ -49,7 +59,6 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "id_rol")
     )
     private Set<Rol> roles = new HashSet<>();
-
 
     @OneToMany(mappedBy = "medico", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Paciente> pacientes = new ArrayList<>();
@@ -66,6 +75,9 @@ public class Usuario {
         }
         if (fechaCreacion == null) {
             fechaCreacion = LocalDateTime.now();
+        }
+        if (intentosFallidos == null) {
+            intentosFallidos = 0;
         }
     }
 

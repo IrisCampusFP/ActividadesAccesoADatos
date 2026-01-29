@@ -1,5 +1,7 @@
 package com.dam.accesodatos.centromedicora3_irisperez.controller;
 
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
+import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
 import com.dam.accesodatos.centromedicora3_irisperez.service.RolService;
@@ -11,9 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
@@ -39,10 +40,23 @@ public class AdminController {
 
     // Obtener todos los usuarios (metodo GET)
     @GetMapping("/usuarios")
-    public ResponseEntity<List<Usuario>> obtenerUsuarios(HttpSession session) {
+    public ResponseEntity<List<UsuarioDTO>> obtenerUsuarios(HttpSession session) {
         usuarioService.comprobarAdmin(session);
         List<Usuario> usuarios = usuarioService.obtenerUsuarios();
-        return ResponseEntity.ok(usuarios);
+
+        List<UsuarioDTO> usuariosDTO = usuarios.stream().map(u ->
+                new UsuarioDTO(
+                        u.getId(),
+                        u.getUsername(),
+                        u.getEmail(),
+                        u.getNombre(),
+                        u.getActivo(),
+                        u.getFechaCreacion(),
+                        u.getRoles(),
+                        u.getPacientes()
+                )
+        ).collect(Collectors.toList());
+        return ResponseEntity.ok(usuariosDTO);
     }
 
     // Actualizar usuario (metodo PUT)

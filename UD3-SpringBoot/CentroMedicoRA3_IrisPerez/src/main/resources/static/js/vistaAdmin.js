@@ -20,7 +20,7 @@ cargarUsuarios();
 // CARGAR LOS DATOS DE LOS USUARIOS EN EL BODY DE LA TABLA
 function cargarUsuarios() {
     // Texto que aparece mientras cargan
-    tbodyUsuarios.innerHTML = '' + '<tr><td colspan="6" class="text-center">Cargando usuarios...</td></tr>';
+    tbodyUsuarios.innerHTML = '' + '<tr><td colspan="100%" class="text-center">Cargando usuarios...</td></tr>';
 
     // Fetch que obtiene los datos de los usuarios y los muestra
     fetch("/admin/usuarios", {
@@ -39,15 +39,13 @@ function cargarUsuarios() {
             tBody += `
             <tr>
                 <td>${u.id}</td>
-                <td>${u.nombre} ${u.apellidos}</td>
                 <td>${u.username}</td>
                 <td>${u.email}</td>
-                <td>${u.dni}</td>
+                <td>${u.nombre}</td>
                 <td>${mostrarEstado(u.activo)}</td>
                 <td>${mostrarFecha(u.fechaCreacion)}</td>
-                <td>${mostrarFecha(u.fechaActualizacion)}</td>
-                <td>${mostrarFecha(u.ultimoLogin)}</td>
                 <td>${mostrarRoles(u.roles)}</td>
+                <td>${mostrarPacientes(u.pacientes)}</td>
                 <!-- Botones para acciones CRUD -->
                 <td class="text-center d-flex gap-2">
                     <button class="btn btn-sm btn-outline-primary"
@@ -84,6 +82,11 @@ function mostrarFecha(fecha) {
 function mostrarRoles(roles) {
     if (!roles || roles.length === 0) return "-";
     return Array.from(roles).map(rol => rol.nombre).join(', ');
+}
+
+function mostrarPacientes(pacientes) {
+    if (!pacientes || pacientes.length === 0) return "Sin pacientes";
+    return Array.from(pacientes).map(paciente => paciente.nombre + " " + paciente.apellidos).join(', ');
 }
 
 // Se muestra el error correspondiente en el recuadro durante 3 segs

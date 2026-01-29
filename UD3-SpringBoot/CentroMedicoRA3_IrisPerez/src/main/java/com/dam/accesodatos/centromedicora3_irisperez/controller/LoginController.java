@@ -29,17 +29,23 @@ public class LoginController {
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<?> inicioSesion(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) {
-        if (usuarioService.comprobarPassword(loginRequestDTO.getPassword(), loginRequestDTO.getEmail())) {
-            Usuario usuario = usuarioService.obtenerUsuarioPorEmail(loginRequestDTO.getEmail());
+        try {
+            if (usuarioService.comprobarPassword(loginRequestDTO.getPassword(), loginRequestDTO.getEmail())) {
+                Usuario usuario = usuarioService.obtenerUsuarioPorEmail(loginRequestDTO.getEmail());
 
-            Set<Rol> roles = new HashSet<>(usuario.getRoles());
-            List<Paciente> pacientes = usuario.getPacientes();
-            UsuarioDTO usuarioDTO = new UsuarioDTO(usuario.getId(), usuario.getUsername(), usuario.getEmail(),
-                    usuario.getNombre(), usuario.getActivo(), usuario.getFechaCreacion(), roles, pacientes);
-            session.setAttribute("usuarioDTO", usuarioDTO);
-            return ResponseEntity.ok(usuarioDTO);
+                Set<Rol> roles = new HashSet<>(usuario.getRoles());
+                List<Paciente> pacientes = usuario.getPacientes();
+                UsuarioDTO usuarioDTO = new UsuarioDTO(usuario.getId(), usuario.getUsername(), usuario.getEmail(),
+                        usuario.getNombre(), usuario.getActivo(), usuario.getFechaCreacion(), roles, pacientes);
+                session.setAttribute("usuarioDTO", usuarioDTO);
+                return ResponseEntity.ok(usuarioDTO);
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "Contraseña incorrecta"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("mensaje", e.getMessage()));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+
     }
 
     @GetMapping("/killSession")

@@ -23,11 +23,8 @@ formulario.addEventListener("submit", (e) => {
         if(!response.ok){
             // Intentar leer mensaje de error del backend
             return response.json().then((data) => {
-                throw data.msg;
-            }).catch(() => {
-                // Si no llega ningún JSON con mensaje de error se usa uno genérico
-                throw new Error(`No se ha podido iniciar sesión. Error ${response.status}: ${response.statusText}`);
-            });
+                throw data.mensaje;
+            })
         }
         return response.json();
     }).then(() => {
