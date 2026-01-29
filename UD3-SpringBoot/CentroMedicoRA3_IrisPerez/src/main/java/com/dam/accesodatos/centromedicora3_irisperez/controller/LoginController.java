@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -27,7 +28,7 @@ public class LoginController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<UsuarioDTO> inicioSesion(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) {
+    public ResponseEntity<?> inicioSesion(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) {
         if (usuarioService.comprobarPassword(loginRequestDTO.getPassword(), loginRequestDTO.getEmail())) {
             Usuario usuario = usuarioService.obtenerUsuarioPorEmail(loginRequestDTO.getEmail());
 

@@ -20,16 +20,20 @@ formulario.addEventListener("submit", (e) => {
             password: passwordRecibida
         })
     }).then((response) => {
-        if(response.ok){
-            return response.json();
-        } else {
-            throw new Error(`Error ${response.status}: ${response.statusText}`);
+        if(!response.ok){
+            // Intentar leer mensaje de error del backend
+            return response.json().then((data) => {
+                throw data.msg;
+            }).catch(() => {
+                // Si no llega ningún JSON con mensaje de error se usa uno genérico
+                throw new Error(`No se ha podido iniciar sesión. Error ${response.status}: ${response.statusText}`);
+            });
         }
+        return response.json();
     }).then(() => {
         window.location.href = "/vista"
     }).catch((error) => {
         // En caso de error:
-        console.error("Fallo en login:", error);
-        alert("No se ha podido iniciar sesión.")
+        alert(error);
     });
 })
