@@ -1,0 +1,9 @@
+<libro id="L001">
+    <titulo>Cien años de soledad</titulo>
+    <autor>Gabriel García Márquez</autor>
+    <anio>1967</anio>
+    <isbn>978-84-376-0494-8</isbn>
+    <contenido>
+        Muchos años después, frente al pelotón de fusilamiento, el coronel Aureliano Buendía había de recordar aquella tarde remota en que su padre lo llevó a conocer el hielo...
+    </contenido>
+</libro>

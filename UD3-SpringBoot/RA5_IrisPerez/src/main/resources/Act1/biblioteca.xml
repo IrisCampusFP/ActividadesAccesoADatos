@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libro id="L002" isbn="978-84-206-8254-2">
+    <titulo>Cien años de soledad</titulo>
+    <subtitulo>Edición conmemorativa</subtitulo>
+
+    <autores>
+        <autor id="A002">
+            <nombre>Gabriel García Márquez</nombre>
+            <rol>Autor principal</rol>
+        </autor>
+    </autores>
+
+    <editorial>
+        <nombre>Editorial Sudamericana</nombre>
+        <ciudad>Buenos Aires</ciudad>
+    </editorial>
+
+    <anio>1967</anio>
+
+    <generos>
+        <genero>Novela</genero>
+        <genero>Realismo mágico</genero>
+    </generos>
+
+    <paginas>471</paginas>
+    <estado>disponible</estado>
+</libro>

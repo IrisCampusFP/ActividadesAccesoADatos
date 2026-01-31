@@ -1,0 +1,48 @@
+<biblioteca>
+    <libros>
+        <libro id="L001" isbn="978-84-376-0494-7">
+            <titulo>Don Quijote de la Mancha</titulo>
+            <autor>Miguel de Cervantes</autor>
+            <anio>1605</anio>
+            <generos>
+                <genero>Novela</genero>
+                <genero>Clasico</genero>
+            </generos>
+            <paginas>1345</paginas>
+            <disponible>true</disponible>
+        </libro>
+        <libro id="L002" isbn="978-84-376-0495-4">
+            <titulo>Cien anos de soledad</titulo>
+            <autor>Gabriel Garcia Marquez</autor>
+            <anio>1967</anio>
+            <generos>
+                <genero>Novela</genero>
+                <genero>Realismo magico</genero>
+            </generos>
+            <paginas>471</paginas>
+            <disponible>true</disponible>
+        </libro>
+        <libro id="L003">
+            <titulo>1984</titulo>
+            <autor>George Orwell</autor>
+            <anio>1949</anio>
+            <generos>
+                <genero>Distopia</genero>
+                <genero>Ciencia ficcion</genero>
+            </generos>
+            <paginas>326</paginas>
+            <disponible>false</disponible>
+        </libro>
+        <libro id="L004" isbn="978-0-14-028329-7">
+            <titulo>El senor de los anillos</titulo>
+            <autor>J.R.R. Tolkien</autor>
+            <anio>1954</anio>
+            <generos>
+                <genero>Fantasia</genero>
+                <genero>Aventuras</genero>
+            </generos>
+            <paginas>1178</paginas>
+            <disponible>true</disponible>
+        </libro>
+    </libros>
+</biblioteca>

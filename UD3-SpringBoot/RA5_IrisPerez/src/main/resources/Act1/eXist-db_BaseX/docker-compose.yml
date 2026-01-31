@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  existdb:
+    image: existdb/existdb:6.2.0
+    container_name: existdb
+    ports:
+      - "8080:8080"
+    volumes:
+      - existdb_data:/exist/data
+    environment:
+      - EXIST_ENV=development
+    restart: unless-stopped
+
+  basex:
+    image: basex/basexhttp:latest
+    container_name: basex
+    ports:
+      - "1984:1984"
+      - "8984:8984"
+    volumes:
+      - basex_data:/srv/basex/data
+    restart: unless-stopped
+
+volumes:
+  existdb_data:
+  basex_data:
+
+# COMANDOS
+
+# Iniciar
+# docker-compose up -d
+
+# Verificar
+# docker-compose ps
+
+# Acceso:
+# eXist-db: http://localhost:8080
+# BaseX: http://localhost:8984

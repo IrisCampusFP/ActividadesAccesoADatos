@@ -1,0 +1,9 @@
+<libro id="L002">
+    <titulo>1984</titulo>
+    <autor>George Orwell</autor>
+    <anio>1949</anio>
+    <isbn>978-84-206-3370-0</isbn>
+    <contenido>
+        Era un día luminoso y frío de abril, y los relojes daban las trece...
+    </contenido>
+</libro>
