@@ -15,15 +15,11 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDTO implements Serializable {
+public class UsuarioUpdateDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private Long id;
     private String username;
     private String email;
     private String nombre;
     private Boolean activo;
-    private LocalDateTime fechaCreacion;
-    private Set<Rol> roles;
-    private List<Paciente> pacientes;
 }

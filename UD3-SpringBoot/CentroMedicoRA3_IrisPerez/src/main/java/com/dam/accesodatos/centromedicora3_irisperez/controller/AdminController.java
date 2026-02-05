@@ -1,9 +1,12 @@
 package com.dam.accesodatos.centromedicora3_irisperez.controller;
 
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioUpdateDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
+import com.dam.accesodatos.centromedicora3_irisperez.service.PacienteService;
 import com.dam.accesodatos.centromedicora3_irisperez.service.RolService;
 import com.dam.accesodatos.centromedicora3_irisperez.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -26,12 +29,19 @@ public class AdminController {
     @Autowired
     RolService rolService;
 
+    @Autowired
+    PacienteService pacienteService;
+
+    // ···················
+    //      USUARIOS
+    // ···················
+
     // Crear un nuevo usuario (metodo POST)
     @PostMapping("/usuarios")
     public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario, HttpSession session) {
         usuarioService.comprobarAdmin(session);
         try {
-            Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
+            UsuarioDTO nuevoUsuario = usuarioService.crearUsuario(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
@@ -42,43 +52,20 @@ public class AdminController {
     @GetMapping("/usuarios")
     public ResponseEntity<List<UsuarioDTO>> obtenerUsuarios(HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        List<Usuario> usuarios = usuarioService.obtenerUsuarios();
-
-        List<UsuarioDTO> usuariosDTO = usuarios.stream().map(u ->
-                new UsuarioDTO(
-                        u.getId(),
-                        u.getUsername(),
-                        u.getEmail(),
-                        u.getNombre(),
-                        u.getActivo(),
-                        u.getFechaCreacion(),
-                        u.getRoles(),
-                        u.getPacientes()
-                )
-        ).collect(Collectors.toList());
-        return ResponseEntity.ok(usuariosDTO);
+        List<UsuarioDTO> usuarios = usuarioService.obtenerUsuarios();
+        return ResponseEntity.ok(usuarios);
     }
 
     // Actualizar usuario (metodo PUT)
     // (Se utiliza PathVariable para asegurarnos de actualizar el usuario correspondiente)
     @PutMapping("/usuarios/{id}")
-    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Map<String, Object> datosActualizados, HttpSession session) {
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioUpdateDTO usuarioActualizado, HttpSession session) {
         usuarioService.comprobarAdmin(session);
-
-        // Se obtienen los datos originales del usuario
-        Optional<Usuario> usuarioOptional = usuarioService.obtenerUsuarioPorId(id);
-        Usuario usuario = usuarioOptional.get();
-
-        // Se modifican los campos actualizables con los datos recibidos
-        usuario.setNombre((String) datosActualizados.get("nombre"));
-        usuario.setUsername((String) datosActualizados.get("username"));
-        usuario.setEmail((String) datosActualizados.get("email"));
-        usuario.setActivo((Boolean) datosActualizados.get("activo"));
 
         // Se actualiza el usuario en la base de datos
         try {
-            Usuario usuarioActualizado = usuarioService.actualizarUsuario(usuario);
-            return ResponseEntity.ok(usuarioActualizado);
+            UsuarioDTO usuario = usuarioService.actualizarUsuario(id, usuarioActualizado);
+            return ResponseEntity.ok(usuario);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
         }
@@ -86,10 +73,9 @@ public class AdminController {
 
     // Obtener usuario por ID (metodo GET)
     @GetMapping("/usuarios/{id}")
-    public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        Usuario usuario = usuarioService.obtenerUsuarioPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        UsuarioDTO usuario = usuarioService.obtenerUsuarioPorId(id);
         return ResponseEntity.ok(usuario);
     }
 
@@ -138,21 +124,44 @@ public class AdminController {
         }
     }
 
-
     // Obtener todos los roles (metodo GET)
-    @GetMapping("/roles")
-    public ResponseEntity<List<Rol>> obtenerRoles(HttpSession session) {
+    @GetMapping("/usuarios/roles")
+    public ResponseEntity<?>obtenerRoles(HttpSession session) {
         usuarioService.comprobarAdmin(session);
         List<Rol> roles = rolService.obtenerRoles();
         return ResponseEntity.ok(roles);
     }
 
     // Asignar roles (metodo PUT)
-    @PutMapping("/usuarios/{id}/roles")
-    public ResponseEntity<Void> actualizarRoles(@PathVariable Long id, @RequestBody List<Long> idsRoles, HttpSession session) {
+    @PutMapping("/usuarios/roles/{id}")
+    public ResponseEntity<?> actualizarRoles(@PathVariable Long id, @RequestBody List<Long> idsRoles, HttpSession session) {
         usuarioService.comprobarAdmin(session);
         usuarioService.actualizarRolesUsuario(id, idsRoles);
         return ResponseEntity.noContent().build();
     }
 
+
+    // ···················
+    //      PACIENTES
+    // ···················
+
+    // Crear un nuevo paciente (metodo POST)
+    @PostMapping("/pacientes")
+    public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        try {
+            PacienteDTO nuevoPaciente = pacienteService.crearPaciente(paciente);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
+        }
+    }
+
+    // Obtener todos los pacientes (metodo GET)
+    @GetMapping("/pacientes")
+    public ResponseEntity<?> obtenerPacientes(HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        List<PacienteDTO> pacientes = pacienteService.obtenerPacientes();
+        return ResponseEntity.ok(pacientes);
+    }
 }

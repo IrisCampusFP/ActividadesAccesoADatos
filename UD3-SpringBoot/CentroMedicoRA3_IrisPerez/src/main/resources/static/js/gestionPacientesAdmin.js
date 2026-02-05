@@ -1,70 +1,74 @@
-var tbodyUsuarios = document.getElementById("tBodyUsuarios");
+var tbodyPacientes = document.getElementById("tBodyPacientes");
 var recuadroAlert = document.getElementById("recuadroAlert");
 
-var dialogCrearUsuario = document.getElementById("dialogCrearUsuario");
-var dialogEditarUsuario = document.getElementById("dialogEditarUsuario");
+var dialogCrearPaciente = document.getElementById("dialogCrearPaciente");
+var dialogEditarPaciente = document.getElementById("dialogEditarPaciente");
 var dialogCambiarPassword = document.getElementById("dialogCambiarPassword");
 var dialogAsignarRoles = document.getElementById("dialogAsignarRoles");
 
-// Mostrar nombre del admin en el title
+// Mostrar nombre del médico en el title
 fetch("/user/datos")
     .then((r) => {
         return r.json();
     })
     .then((data) => {
-        document.title = "Gestión de usuarios (" + data.nombre + ")";
+        document.title = "Gestión de pacientes (" + data.nombre + ")";
     });
 
-cargarUsuarios();
+cargarPacientes();
 
-// CARGAR LOS DATOS DE LOS USUARIOS EN EL BODY DE LA TABLA
-function cargarUsuarios() {
+// CARGAR LOS DATOS DE LOS PACIENTES EN EL BODY DE LA TABLA
+function cargarPacientes() {
     // Texto que aparece mientras cargan
-    tbodyUsuarios.innerHTML = '' + '<tr><td colspan="100%" class="text-center">Cargando usuarios...</td></tr>';
+    tbodyPacientes.innerHTML = '' + '<tr><td colspan="100%" class="text-center">Cargando pacientes...</td></tr>';
 
-    // Fetch que obtiene los datos de los usuarios y los muestra
-    fetch("/admin/usuarios", {
+    // Fetch que obtiene los datos de los pacientes y los muestra
+    fetch("/admin/pacientes", {
         method: "GET",
     }).then((response) => {
-        if (!response.ok) mostrarError("Error al obtener los datos de los usuarios");
+        if (!response.ok) mostrarError("Error al obtener los datos de los pacientes");
         return response.json();
-    }).then((usuarios) => {
-        if (usuarios.length === 0) {
-            tbodyUsuarios.innerHTML = '<tr><td colspan="6" class="text-center">No hay usuarios registrados</td></tr>';
+    }).then((pacientes) => {
+        if (pacientes.length === 0) {
+            tbodyPacientes.innerHTML = '<tr><td colspan="100%" class="text-center">No hay pacientes registrados</td></tr>';
             return;
         }
-        // Se muestran los datos de cada usuario fila por fila (tr) en el tBody
+        // Se muestran los datos de cada paciente fila por fila (tr) en el tBody
         var tBody = "";
-        usuarios.forEach(u => {
+        pacientes.forEach(p => {
             tBody += `
             <tr>
-                <td>${u.id}</td>
-                <td>${u.username}</td>
-                <td>${u.email}</td>
-                <td>${u.nombre}</td>
-                <td>${mostrarEstado(u.activo)}</td>
-                <td>${mostrarFecha(u.fechaCreacion)}</td>
-                <td>${mostrarRoles(u.roles)}</td>
-                <td>${mostrarPacientes(u.pacientes)}</td>
+                <td>${p.id}</td>
+                <td>${p.nombre}</td>
+                <td>${p.apellidos}</td>
+                <td>${p.dni}</td>
+                <td>${p.telefono}</td>
+                <td>${mostrarFecha(p.fechaNacimiento)}</td>
+                <td>${p.historial}</td>
+                <td>${p.medico}</td>
+                <td>${mostrarEstado(p.activo)}</td>
+                <td>${mostrarFecha(p.fechaCreacion)}</td>
                 <!-- Botones para acciones CRUD -->
-                <td class="text-center d-flex gap-2">
-                    <button class="btn btn-sm btn-outline-primary"
-                        onclick="cargarDialogEditar(${u.id})">Editar</button>
-                    <button class="btn btn-sm btn-outline-success" 
-                        onclick="cargarDialogAsignarRoles(${u.id})">Asignar roles</button>
-                    <button class="btn btn-sm btn-outline-warning"
-                            onclick="cambiarEstado(${u.id})">${u.activo ? "Desactivar" : "Activar"}
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger"
-                            onclick="eliminarUsuario(${u.id})">Eliminar</button>
+                <td>
+                    <div class="d-flex gap-2 w-100">
+                        <button class="btn btn-sm btn-outline-primary flex-fill"
+                            onclick="cargarDialogEditar(${p.id})">Editar</button>
+                        <button class="btn btn-sm btn-outline-success flex-fill" 
+                            onclick="cargarDialogAsignarRoles(${p.id})">Asignar roles</button>
+                        <button class="btn btn-sm btn-outline-warning flex-fill"
+                                onclick="cambiarEstado(${p.id})">${p.activo ? "Desactivar" : "Activar"}
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger flex-fill"
+                                onclick="eliminarPaciente(${p.id})">Eliminar</button>
+                    </div>
                 </td>
             </tr>
         `;
         });
-        tbodyUsuarios.innerHTML = tBody;
+        tbodyPacientes.innerHTML = tBody;
     })
     .catch(() => {
-        mostrarError("Error al cargar la lista de usuarios.");
+        mostrarError("Error al cargar la lista de pacientes.");
     })
 }
 
@@ -77,16 +81,6 @@ function mostrarEstado(activo) {
 
 function mostrarFecha(fecha) {
     return fecha ? new Date(fecha).toLocaleString() : "-";
-}
-
-function mostrarRoles(roles) {
-    if (!roles || roles.length === 0) return "-";
-    return Array.from(roles).map(rol => rol.nombre).join(', ');
-}
-
-function mostrarPacientes(pacientes) {
-    if (!pacientes || pacientes.length === 0) return "Sin pacientes";
-    return Array.from(pacientes).map(paciente => paciente.nombre + " " + paciente.apellidos).join(', ');
 }
 
 // Se muestra el error correspondiente en el recuadro durante 3 segs
@@ -103,17 +97,17 @@ function mostrarError(msg) {
 }
 
 
-// CREAR NUEVO USUARIO
+// CREAR NUEVO PACIENTE
 
-// Al pulsar el botón 'Crear nuevo usuario' se abre el modal (dialog) con el formulario
-document.getElementById("btnCrearUsuario").onclick = () => {
-    dialogCrearUsuario.showModal();
+// Al pulsar el botón 'Crear nuevo paciente' se abre el modal (dialog) con el formulario
+document.getElementById("btnCrearPaciente").onclick = () => {
+    dialogCrearPaciente.showModal();
 };
 
 var msgCrearError = document.getElementById("msgCrearError");
 
-// Al enviar el formulario se llama a la función crear usuario
-document.getElementById("formCrearUsuario").onsubmit = (e) => {
+// Al enviar el formulario se llama a la función crear paciente
+document.getElementById("formCrearPaciente").onsubmit = (e) => {
     e.preventDefault();
 
     // Validación del DNI
@@ -126,8 +120,8 @@ document.getElementById("formCrearUsuario").onsubmit = (e) => {
         return;
     }
 
-    // Si el dni es válido, se llama a la función para crear el usuario
-    crearUsuario(dni);
+    // Si el dni es válido, se llama a la función para crear el paciente
+    crearPaciente(dni);
 };
 
 // Función de validación del DNI español
@@ -144,9 +138,9 @@ function validarDNI(dni) {
     return letraCorrecta === dni.charAt(8);
 }
 
-// Función que envía al backend los datos del nuevo usuario, se guardan y se recarga la tabla
-function crearUsuario(dni) {
-    fetch("/admin/usuarios", {
+// Función que envía al backend los datos del nuevo paciente, se guardan y se recarga la tabla
+function crearPaciente(dni) {
+    fetch("/admin/pacientes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,10 +161,10 @@ function crearUsuario(dni) {
                     throw new Error(`Error ${r.status}: ${r.statusText}`);
                 });
             return r.json();
-        }).then(usuarioCreado => {
-            dialogCrearUsuario.close(); // se cierra el dialog (pop-up)
-            cargarUsuarios(); // se recargan los datos mostrados en la tabla
-            cargarDialogAsignarRoles(usuarioCreado.id); // Se abre el dialog para asignar roles
+        }).then(pacienteCreado => {
+            dialogCrearPaciente.close(); // se cierra el dialog (pop-up)
+            cargarPacientes(); // se recargan los datos mostrados en la tabla
+            cargarDialogAsignarRoles(pacienteCreado.id); // Se abre el dialog para asignar roles
         })
         .catch((error) => {
             msgCrearError.textContent = error;
@@ -178,39 +172,39 @@ function crearUsuario(dni) {
         });
 }
 
-dialogCrearUsuario.addEventListener("close", () => {
-    document.getElementById("formCrearUsuario").reset();
+dialogCrearPaciente.addEventListener("close", () => {
+    document.getElementById("formCrearPaciente").reset();
     msgCrearError.classList.add("d-none");
 });
 
-// EDITAR USUARIO
+// EDITAR PACIENTE
 
-// Al pulsar el botón editar se llama a esta función que obtiene los datos del usuario por su id
+// Al pulsar el botón editar se llama a esta función que obtiene los datos del paciente por su id
 function cargarDialogEditar(id) {
-    fetch("/admin/usuarios/" + id)
+    fetch("/admin/pacientes/" + id)
         .then((r) => {
             if (!r.ok) throw new Error(`Error ${r.status}: ${r.statusText}`);
             return r.json();
         })
-        .then((u) => {
-            document.getElementById("usuarioPassEditadaId").value = u.id; // Por si pulsa cambiar contraseña
-            document.getElementById("idUsuarioEditado").value = u.id;
-            document.getElementById("nombreEditar").value = u.nombre;
-            document.getElementById("apellidosEditar").value = u.apellidos;
-            document.getElementById("usernameEditar").value = u.username;
-            document.getElementById("emailEditar").value = u.email;
-            document.getElementById("dniEditar").value = u.dni;
-            document.getElementById("activoEditar").value = u.activo
-            dialogEditarUsuario.showModal(); // Una vez cargados los datos se muestra el dialog
+        .then((p) => {
+            document.getElementById("pacientePassEditadaId").value = p.id; // Por si pulsa cambiar contraseña
+            document.getElementById("idPacienteEditado").value = p.id;
+            document.getElementById("nombreEditar").value = p.nombre;
+            document.getElementById("apellidosEditar").value = p.apellidos;
+            document.getElementById("usernameEditar").value = p.username;
+            document.getElementById("emailEditar").value = p.email;
+            document.getElementById("dniEditar").value = p.dni;
+            document.getElementById("activoEditar").value = p.activo
+            dialogEditarPaciente.showModal(); // Una vez cargados los datos se muestra el dialog
         })
         .catch(() => {
-            alert("Error al cargar los datos del usuario.");
+            alert("Error al cargar los datos del paciente.");
         });
 }
 
 
-// Al enviar el formulario se llama a la función editar usuario
-document.getElementById("formEditarUsuario").onsubmit = (e) => {
+// Al enviar el formulario se llama a la función editar paciente
+document.getElementById("formEditarPaciente").onsubmit = (e) => {
     e.preventDefault();
 
     var dni = document.getElementById("dniEditar").value;
@@ -220,16 +214,16 @@ document.getElementById("formEditarUsuario").onsubmit = (e) => {
         return;
     }
 
-    // Se obtiene el dni del usuario en el que se clicó el botón
-    var id = document.getElementById("idUsuarioEditado").value;
+    // Se obtiene el dni del paciente en el que se clicó el botón
+    var id = document.getElementById("idPacienteEditado").value;
 
-    editarUsuario(id);
+    editarPaciente(id);
 };
 
 // Se hace un fetch (metodo PUT) que envía los datos actualizados al backend.
-// En el backend se sustituyen los datos originales del usuario por los modificados.
-function editarUsuario(id) {
-    return fetch("/admin/usuarios/" + id, {
+// En el backend se sustituyen los datos originales del paciente por los modificados.
+function editarPaciente(id) {
+    return fetch("/admin/pacientes/" + id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -250,11 +244,11 @@ function editarUsuario(id) {
                 // Si no llega ningún JSON con mensaje de error personalizado
                 throw new Error(`Error ${r.status}: ${r.statusText}`);
             });
-        dialogEditarUsuario.close(); // Se cierra el dialog
-        cargarUsuarios(); // Se recargan los datos mostrados en la tabla
+        dialogEditarPaciente.close(); // Se cierra el dialog
+        cargarPacientes(); // Se recargan los datos mostrados en la tabla
     })
     .catch((error) => {
-        alert("Error al editar los datos del usuario. " + error);
+        alert("Error al editar los datos del paciente. " + error);
     });
 }
 
@@ -263,7 +257,7 @@ function editarUsuario(id) {
 
 // Se muestra el dialog al pulsar el boton 'Cambiar contraseña'
 document.getElementById("btnCambiarPassword").onclick = () => {
-    dialogEditarUsuario.close() // Se oculta el dialog editar usuario
+    dialogEditarPaciente.close() // Se oculta el dialog editar paciente
     msgPassError.classList.add("d-none");
     dialogCambiarPassword.showModal();
 }
@@ -289,10 +283,10 @@ document.getElementById("formCambiarPassword").onsubmit = (e) => {
 };
 
 function cambiarPassword(passNueva) {
-    var id = document.getElementById("usuarioPassEditadaId").value;
+    var id = document.getElementById("pacientePassEditadaId").value;
     var passActual = document.getElementById("passActual").value;
 
-    fetch("/admin/usuarios/" + id + "/password", {
+    fetch("/admin/pacientes/" + id + "/password", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -323,41 +317,41 @@ function cambiarPassword(passNueva) {
 }
 
 
-// MODIFICAR ESTADO USUARIO (Interruptor)
+// MODIFICAR ESTADO PACIENTE (Interruptor)
 
 // Se hace un fetch (metodo PUT) al metodo que acciona el interruptor
-// En el backend, el usuario cambia al estado contrario (activo -> inactivo, inactivo -> activo)
+// En el backend, el paciente cambia al estado contrario (activo -> inactivo, inactivo -> activo)
 function cambiarEstado(id) {
-    fetch("/admin/usuarios/" + id + "/estado", { method: "PUT" })
+    fetch("/admin/pacientes/" + id + "/estado", { method: "PUT" })
         .then(() => {
-            cargarUsuarios(); // Se recargan los datos de la tabla
+            cargarPacientes(); // Se recargan los datos de la tabla
         }).catch(() => {
-            mostrarError("Error al modificar el estado del usuario con id: " + id);
+            mostrarError("Error al modificar el estado del paciente con id: " + id);
         });
 }
 
 
-// ELIMINAR USUARIO
+// ELIMINAR PACIENTE
 
-function eliminarUsuario(id) {
+function eliminarPaciente(id) {
     // Se pide confirmación
-    if (!confirm("¿Estás segur@ de que quieres eliminar este usuario?\nId: " + id)) return;
+    if (!confirm("¿Estás segur@ de que quieres eliminar este paciente?\nId: " + id)) return;
 
-    // Se hace un fetch con metodo DELETE para eliminar el usuario de la base de datos
-    fetch("/admin/usuarios/" + id, { method: "DELETE" })
+    // Se hace un fetch con metodo DELETE para eliminar el paciente de la base de datos
+    fetch("/admin/pacientes/" + id, { method: "DELETE" })
         .then(() => {
-            cargarUsuarios(); // Se recarga la tabla
+            cargarPacientes(); // Se recarga la tabla
         })
         .catch(() => {
-            alert("Error al eliminar el usuario con id: " + id);
+            alert("Error al eliminar el paciente con id: " + id);
         });
 }
 
 // ASIGNAR ROLES
 
-// Al pulsar el botón asignar roles se llama a esta función que obtiene los datos del usuario y los roles disponibles
+// Al pulsar el botón asignar roles se llama a esta función que obtiene los datos del paciente y los roles disponibles
 function cargarDialogAsignarRoles(id) {
-    document.getElementById("idUsuarioAsignarRoles").value = id;
+    document.getElementById("idPacienteAsignarRoles").value = id;
     document.getElementById("msgRolesError").classList.add("d-none");
 
     // Cargar roles existentes
@@ -367,20 +361,20 @@ function cargarDialogAsignarRoles(id) {
             return r.json();
         })
         .then((rolesDisponibles) => {
-            // Cargar datos del usuario con sus roles actuales
-            return fetch("/admin/usuarios/" + id)
+            // Cargar datos del paciente con sus roles actuales
+            return fetch("/admin/pacientes/" + id)
                 .then((r) => {
-                    if (!r.ok) throw new Error("Error al cargar usuario");
+                    if (!r.ok) throw new Error("Error al cargar paciente");
                     return r.json();
                 })
-                .then((usuario) => {
-                    // Mostrar nombre del usuario en el dialog
-                    document.getElementById("nombreUsuarioAsignarRoles").textContent = usuario.nombre + " " + usuario.apellidos + " (" + usuario.username + "). Id: " + usuario.id;
+                .then((paciente) => {
+                    // Mostrar nombre del paciente en el dialog
+                    document.getElementById("nombrePacienteAsignarRoles").textContent = paciente.nombre + " " + paciente.apellidos + " (" + paciente.username + "). Id: " + paciente.id;
 
-                    // Obtener los ids de los roles que tiene el usuario
-                    var rolesUsuario = usuario.roles.map(r => r.id);
+                    // Obtener los ids de los roles que tiene el paciente
+                    var rolesPaciente = paciente.roles.map(r => r.id);
 
-                    // Se genera el checkbox dinámicamente, seleccionando los roles que ya tiene asignados el usuario
+                    // Se genera el checkbox dinámicamente, seleccionando los roles que ya tiene asignados el paciente
                     var checkboxRoles = document.getElementById("checkboxRoles");
                     var htmlCheckboxRoles = "";
 
@@ -388,7 +382,7 @@ function cargarDialogAsignarRoles(id) {
                         htmlCheckboxRoles += `
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="${rol.id}"
-                                       id="rol${rol.id}" ${(rolesUsuario.includes(rol.id) ? 'checked' : '')}>
+                                       id="rol${rol.id}" ${(rolesPaciente.includes(rol.id) ? 'checked' : '')}>
                                 <label class="form-check-label" for="rol${rol.id}">${rol.nombre}</label>
                             </div>
                         `;
@@ -413,7 +407,7 @@ var msgRolesError = document.getElementById("msgRolesError");
 
 // Función que envía los roles seleccionados al backend
 function asignarRoles() {
-    var id = document.getElementById("idUsuarioAsignarRoles").value;
+    var id = document.getElementById("idPacienteAsignarRoles").value;
     var checkboxMarcados = document.querySelectorAll("#checkboxRoles input[type='checkbox']:checked");
     var rolesSeleccionados = [];
 
@@ -423,12 +417,12 @@ function asignarRoles() {
 
     // Se comprueba que se haya seleccionado al menos un rol
     if (rolesSeleccionados.length === 0) {
-        msgRolesError.textContent = "El usuario debe tener al menos un rol.";
+        msgRolesError.textContent = "El paciente debe tener al menos un rol.";
         msgRolesError.classList.remove("d-none");
         return;
     }
 
-    fetch("/admin/usuarios/" + id + "/roles", {
+    fetch("/admin/pacientes/" + id + "/roles", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rolesSeleccionados)
@@ -436,10 +430,10 @@ function asignarRoles() {
         .then((r) => {
             if (!r.ok) throw new Error("Error al actualizar roles");
             dialogAsignarRoles.close(); // Se cierra el dialog
-            cargarUsuarios(); // Se recargan los datos mostrados en la tabla
+            cargarPacientes(); // Se recargan los datos mostrados en la tabla
         })
         .catch(() => {
-            msgRolesError.textContent = "Error al actualizar los roles del usuario.";
+            msgRolesError.textContent = "Error al actualizar los roles del paciente.";
             msgRolesError.classList.remove("d-none");
         });
 }

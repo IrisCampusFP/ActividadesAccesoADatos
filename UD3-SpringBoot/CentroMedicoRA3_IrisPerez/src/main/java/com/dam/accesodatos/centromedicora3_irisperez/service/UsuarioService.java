@@ -1,6 +1,7 @@
 package com.dam.accesodatos.centromedicora3_irisperez.service;
 
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioUpdateDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
 import com.dam.accesodatos.centromedicora3_irisperez.repository.RolRepository;
@@ -77,12 +78,31 @@ public class UsuarioService {
         return false;
     }
 
-
     @Transactional(readOnly = true)
     public Usuario obtenerUsuarioPorEmail(String email) {
         return usuarioRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No existe ningún usuario registrado con ese email."));
     }
 
+    @Transactional(readOnly = true)
+    public UsuarioDTO toDTO(Usuario usuario) {
+        if (usuario == null) return null;
+
+        return new UsuarioDTO(
+                usuario.getId(),
+                usuario.getUsername(),
+                usuario.getEmail(),
+                usuario.getNombre(),
+                usuario.getActivo(),
+                usuario.getFechaCreacion(),
+                usuario.getRoles(),
+                usuario.getPacientes()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioDTO> toDTOList(List<Usuario> usuarios) {
+        return usuarios.stream().map(this::toDTO).toList();
+    }
 
     // CREATE
 
@@ -92,7 +112,7 @@ public class UsuarioService {
      * - Ya existe un usuario con ese email
      */
     @Transactional
-    public Usuario crearUsuario(Usuario usuario) {
+    public UsuarioDTO crearUsuario(Usuario usuario) {
 
         if (usuario == null) throw new IllegalArgumentException("Usuario nulo");
 
@@ -101,33 +121,40 @@ public class UsuarioService {
 
         usuario.setPasswordHash(usuario.getPassword()); // Se hashea la contraseña del usuario
 
-        return usuarioRepository.save(usuario);
+        return toDTO(usuarioRepository.save(usuario));
     }
 
     // READ
 
     // Obtener todos los usuarios
     @Transactional(readOnly = true)
-    public List<Usuario> obtenerUsuarios() {
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> obtenerUsuarios() {
+        return toDTOList(usuarioRepository.findAll());
     }
 
     // Obtener usuario por id
     @Transactional(readOnly = true)
-    public Optional<Usuario> obtenerUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id);
+    public UsuarioDTO obtenerUsuarioPorId(Long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            return toDTO(usuario.get());
+        } else {
+            throw new IllegalArgumentException("No se ha encontrado ningún usuario con id: " + id);
+        }
     }
 
     // Obtener usuario por username
     @Transactional(readOnly = true)
-    public Usuario obtenerUsuarioPorUsername(String username) {
-        return usuarioRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("No se ha encontrado ningún usuario con el username '" + username + "'"));
+    public UsuarioDTO obtenerUsuarioPorUsername(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("No se ha encontrado ningún usuario con el username '" + username + "'"));
+        return toDTO(usuario);
     }
 
     // Obtener todos los usuarios activos
     @Transactional(readOnly = true)
-    public List<Usuario> obtenerUsuariosActivos() {
-        return usuarioRepository.findByActivoTrue();
+    public List<UsuarioDTO> obtenerUsuariosActivos() {
+        return toDTOList(usuarioRepository.findByActivoTrue());
     }
 
     // UPDATE
@@ -167,18 +194,28 @@ public class UsuarioService {
      * - El usuario a actualizar no existe en la base de datos
      */
     @Transactional
-    public Usuario actualizarUsuario(Usuario usuario) {
+    public UsuarioDTO actualizarUsuario(Long id, UsuarioUpdateDTO usuarioActualizado) {
+        if(usuarioActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos");
 
-        if(usuario == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos");
+        Optional<Usuario> usuarioAActualizar = usuarioRepository.findById(id);
 
-        Optional<Usuario> usuarioAActualizar = usuarioRepository.findById(usuario.getId());
+        if (usuarioAActualizar.isEmpty()) {
+            throw new IllegalStateException("El usuario no existe en la base de datos");
+        } else {
+            Usuario usuario = usuarioAActualizar.get();
 
-        if(usuarioAActualizar.isEmpty()) throw new IllegalStateException("El usuario no existe en la base de datos");
+            comprobarUsernameUnicoEditar(usuario.getUsername(), usuarioActualizado.getUsername());
+            comprobarEmailUnicoEditar(usuario.getEmail(), usuarioActualizado.getEmail());
 
-        comprobarUsernameUnicoEditar(usuario.getUsername(), usuarioAActualizar.get().getUsername());
-        comprobarEmailUnicoEditar(usuario.getEmail(), usuarioAActualizar.get().getEmail());
+            // Actualizo los campos (sobrescribo los originales con los nuevos)
+            usuario.setUsername(usuarioActualizado.getUsername());
+            usuario.setEmail(usuarioActualizado.getEmail());
+            usuario.setNombre(usuarioActualizado.getNombre());
+            usuario.setActivo(usuarioActualizado.getActivo());
 
-        return usuarioRepository.save(usuario);
+            // Guardo el usuario en la base de datos y retorno los datos del usuario actualizado
+            return toDTO(usuarioRepository.save(usuario));
+        }
     }
 
     // Recibe un id de usuario y una lista con ids de roles,
@@ -227,9 +264,9 @@ public class UsuarioService {
     }
 
 
-    // CONTROL DE ACCESO A ENDPOINTS
+    // CONTROL DE PERMISOS
 
-    // Comprueba si el usuario es administrador (antes de acceder a un endpoint)
+    // Comprueba que el usuario sea administrador
     public void comprobarAdmin(HttpSession session) {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
@@ -242,7 +279,6 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 
-    // Comprueba si el usuario tiene rol de médico (antes de acceder a un endpoint)
     public void comprobarMedico(HttpSession session) {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
@@ -255,7 +291,6 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 
-    // Comprueba si el usuario tiene rol de recepción (antes de acceder a un endpoint)
     public void comprobarRecepcion(HttpSession session) {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");

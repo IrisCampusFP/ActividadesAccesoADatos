@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
+    List<Paciente> findAllByMedico_Id(Long medicoId);
+    
     // Obtener pacientes activos (activo = true)
     List<Paciente> findByActivoTrue();
 

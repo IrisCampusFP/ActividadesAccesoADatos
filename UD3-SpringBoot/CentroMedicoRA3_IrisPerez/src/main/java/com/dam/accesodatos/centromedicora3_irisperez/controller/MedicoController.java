@@ -1,8 +1,13 @@
 package com.dam.accesodatos.centromedicora3_irisperez.controller;
 
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteDTO;
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioUpdateDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
+import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
 import com.dam.accesodatos.centromedicora3_irisperez.service.RolService;
+import com.dam.accesodatos.centromedicora3_irisperez.service.PacienteService;
 import com.dam.accesodatos.centromedicora3_irisperez.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,122 +28,68 @@ public class MedicoController {
     UsuarioService usuarioService;
 
     @Autowired
+    PacienteService pacienteService;
+
+    @Autowired
     RolService rolService;
 
-    // Crear un nuevo usuario (metodo POST)
-    @PostMapping("/usuarios")
-    public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario, HttpSession session) {
+    // Crear un nuevo paciente (metodo POST)
+    @PostMapping("/pacientes")
+    public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente, HttpSession session) {
         usuarioService.comprobarMedico(session);
         try {
-            Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+            PacienteDTO nuevoPaciente = pacienteService.crearPaciente(paciente);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
         }
     }
 
-    // Obtener todos los usuarios (metodo GET)
-    @GetMapping("/usuarios")
-    public ResponseEntity<List<Usuario>> obtenerUsuarios(HttpSession session) {
+    // Obtener todos los pacientes (metodo GET)
+    @GetMapping("/pacientes")
+    public ResponseEntity<?> obtenerPacientes(HttpSession session) {
         usuarioService.comprobarMedico(session);
-        List<Usuario> usuarios = usuarioService.obtenerUsuarios();
-        return ResponseEntity.ok(usuarios);
+        UsuarioDTO dtoMedico = (UsuarioDTO) session.getAttribute("UsuarioDTO");
+        List<PacienteDTO> pacientes = pacienteService.obtenerPacientesMedico(dtoMedico.getId());
+        return ResponseEntity.ok(pacientes);
     }
 
-    // Actualizar usuario (metodo PUT)
-    // (Se utiliza PathVariable para asegurarnos de actualizar el usuario correspondiente)
-    @PutMapping("/usuarios/{id}")
-    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Map<String, Object> datosActualizados, HttpSession session) {
+    // Actualizar paciente (metodo PUT)
+    // (Se utiliza PathVariable para asegurarnos de actualizar el paciente correspondiente)
+    @PutMapping("/pacientes/{id}")
+    public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteActualizado, HttpSession session) {
         usuarioService.comprobarMedico(session);
 
-        // Se obtienen los datos originales del usuario
-        Optional<Usuario> usuarioOptional = usuarioService.obtenerUsuarioPorId(id);
-        Usuario usuario = usuarioOptional.get();
-
-        // Se modifican los campos actualizables con los datos recibidos
-        usuario.setNombre((String) datosActualizados.get("nombre"));
-        usuario.setUsername((String) datosActualizados.get("username"));
-        usuario.setEmail((String) datosActualizados.get("email"));
-        usuario.setActivo((Boolean) datosActualizados.get("activo"));
-
-        // Se actualiza el usuario en la base de datos
+        // Se actualiza el paciente en la base de datos
         try {
-            Usuario usuarioActualizado = usuarioService.actualizarUsuario(usuario);
-            return ResponseEntity.ok(usuarioActualizado);
+            PacienteDTO paciente = pacienteService.actualizarPaciente(id, pacienteActualizado);
+            return ResponseEntity.ok(paciente);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
         }
     }
 
-    // Obtener usuario por ID (metodo GET)
-    @GetMapping("/usuarios/{id}")
-    public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id, HttpSession session) {
+    // Obtener paciente por ID (metodo GET)
+    @GetMapping("/pacientes/{id}")
+    public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarMedico(session);
-        Usuario usuario = usuarioService.obtenerUsuarioPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-        return ResponseEntity.ok(usuario);
+        PacienteDTO paciente = pacienteService.obtenerPacientePorId(id);
+        return ResponseEntity.ok(paciente);
     }
 
-    // Cambiar estado del usuario (activo/inactivo) (metodo PUT)
-    @PutMapping("/usuarios/{id}/estado")
+    // Cambiar estado del paciente (activo/inactivo) (metodo PUT)
+    @PutMapping("/pacientes/{id}/estado")
     public ResponseEntity<Void> cambiarEstado(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarMedico(session);
-        usuarioService.interruptorEstado(id);
+        pacienteService.interruptorEstado(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Eliminar un usuario (metodo DELETE)
-    @DeleteMapping("/usuarios/{id}")
-    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id, HttpSession session) {
+    // Eliminar un paciente (metodo DELETE)
+    @DeleteMapping("/pacientes/{id}")
+    public ResponseEntity<Void> eliminarPaciente(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarMedico(session);
-        usuarioService.eliminarUsuario(id);
+        pacienteService.eliminarPaciente(id);
         return ResponseEntity.noContent().build();
     }
-
-    // Cambiar contraseña (metodo PUT)
-    @PutMapping("/usuarios/{id}/password")
-    public ResponseEntity<?> cambiarPassword(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> body) {
-
-        String passwordActual = body.get("passwordActual");
-        String passwordNueva = body.get("passwordNueva");
-
-        try {
-            usuarioService.cambiarPassword(id, passwordActual, passwordNueva);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            // Contraseña actual incorrecta o contraseña nueva vacía
-            return ResponseEntity
-                    .badRequest()
-                    .body(Map.of("mensaje", e.getMessage()));
-        } catch (IllegalStateException e) {
-            // Usuario inactivo
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("mensaje", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensaje", "Error al cambiar la contraseña"));
-        }
-    }
-
-
-    // Obtener todos los roles (metodo GET)
-    @GetMapping("/roles")
-    public ResponseEntity<List<Rol>> obtenerRoles(HttpSession session) {
-        usuarioService.comprobarMedico(session);
-        List<Rol> roles = rolService.obtenerRoles();
-        return ResponseEntity.ok(roles);
-    }
-
-    // Asignar roles (metodo PUT)
-    @PutMapping("/usuarios/{id}/roles")
-    public ResponseEntity<Void> actualizarRoles(@PathVariable Long id, @RequestBody List<Long> idsRoles, HttpSession session) {
-        usuarioService.comprobarMedico(session);
-        usuarioService.actualizarRolesUsuario(id, idsRoles);
-        return ResponseEntity.noContent().build();
-    }
-
 }

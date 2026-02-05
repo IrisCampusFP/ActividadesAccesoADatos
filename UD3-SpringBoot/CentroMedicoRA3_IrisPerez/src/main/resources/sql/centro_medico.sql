@@ -88,5 +88,3 @@ INSERT INTO pacientes (nombre, apellidos, dni, telefono, fecha_nacimiento, histo
 
     ('Juan', 'Arroyo Martin', '77755544A', '634234634', '1976-06-12',
      'texto ejemplo historial medico', 3, TRUE, NOW());
-
-select * from usuarios;
