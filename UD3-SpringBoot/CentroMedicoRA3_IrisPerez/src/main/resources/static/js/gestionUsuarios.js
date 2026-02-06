@@ -24,9 +24,11 @@ function cargarUsuarios() {
 
     // Fetch que obtiene los datos de los usuarios y los muestra
     fetch("/admin/usuarios", {
-        method: "GET",
+        method: "GET"
     }).then((response) => {
-        if (!response.ok) mostrarError("Error al obtener los datos de los usuarios");
+        if (!response.ok) return response.json()
+            .then(data => { throw data.errorMsg || `Error ${response.status}: No se ha podido cargar la lista de usuarios.`
+            })
         return response.json();
     }).then((usuarios) => {
         if (usuarios.length === 0) {
@@ -45,18 +47,17 @@ function cargarUsuarios() {
                 <td>${mostrarEstado(u.activo)}</td>
                 <td>${mostrarFecha(u.fechaCreacion)}</td>
                 <td>${mostrarRoles(u.roles)}</td>
-                <td>${mostrarPacientes(u.pacientes)}</td>
                 <!-- Botones para acciones CRUD -->
                 <td>
-                    <div class="d-flex gap-2 w-100">
-                        <button class="btn btn-sm btn-outline-primary flex-fill"
+                    <div class="d-flex gap-2 col-11">
+                        <button class="btn btn-sm btn-outline-primary col-3"
                             onclick="cargarDialogEditar(${u.id})">Editar</button>
-                        <button class="btn btn-sm btn-outline-success flex-fill" 
+                        <button class="btn btn-sm btn-outline-success col-3" 
                             onclick="cargarDialogAsignarRoles(${u.id})">Asignar roles</button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill"
+                        <button class="btn btn-sm btn-outline-warning col-3"
                             onclick="cambiarEstado(${u.id})">${u.activo ? "Desactivar" : "Activar"}
                         </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill"
+                        <button class="btn btn-sm btn-outline-danger col-3"
                             onclick="eliminarUsuario(${u.id})">Eliminar</button>
                     </div>
                 </td>
@@ -65,8 +66,8 @@ function cargarUsuarios() {
         });
         tbodyUsuarios.innerHTML = tBody;
     })
-    .catch(() => {
-        mostrarError("Error al cargar la lista de usuarios.");
+    .catch((error) => {
+        mostrarError(error);
     })
 }
 
@@ -83,18 +84,13 @@ function mostrarFecha(fecha) {
 
 function mostrarRoles(roles) {
     if (!roles || roles.length === 0) return "-";
-    return Array.from(roles).map(rol => rol.nombre).join(', ');
-}
-
-function mostrarPacientes(pacientes) {
-    if (!pacientes || pacientes.length === 0) return "Sin pacientes";
-    return Array.from(pacientes).map(paciente => paciente.nombre + " " + paciente.apellidos).join(', ');
+    return roles.map(rol => rol.nombre).join(', ');
 }
 
 // Se muestra el error correspondiente en el recuadro durante 3 segs
-function mostrarError(msg) {
+function mostrarError(errorMsg) {
     // Mostrar
-    recuadroAlert.textContent = msg;
+    recuadroAlert.textContent = errorMsg;
     recuadroAlert.classList.remove("d-none");
 
     // Ocultar
@@ -117,57 +113,29 @@ var msgCrearError = document.getElementById("msgCrearError");
 // Al enviar el formulario se llama a la función crear usuario
 document.getElementById("formCrearUsuario").onsubmit = (e) => {
     e.preventDefault();
-
-    // Validación del DNI
-
-    var dni = document.getElementById("dniCrear").value.trim();
-
-    if (!validarDNI(dni)) {
-        msgCrearError.textContent = "DNI inválido. Debe tener 8 dígitos y 1 letra";
-        msgCrearError.classList.remove("d-none");
-        return;
-    }
-
-    // Si el dni es válido, se llama a la función para crear el usuario
-    crearUsuario(dni);
+    crearUsuario();
 };
 
-// Función de validación del DNI español
-function validarDNI(dni) {
-    dni = dni.toUpperCase().trim();
-    const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
 
-    // Formato: 8 dígitos + 1 letra
-    if (!/^\d{8}[A-Z]$/.test(dni)) return false;
-
-    const numero = parseInt(dni.slice(0, 8), 10);
-    const letraCorrecta = letras[numero % 23];
-
-    return letraCorrecta === dni.charAt(8);
-}
 
 // Función que envía al backend los datos del nuevo usuario, se guardan y se recarga la tabla
-function crearUsuario(dni) {
+function crearUsuario() {
     fetch("/admin/usuarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            nombre: document.getElementById("nombreCrear").value.trim(),
-            apellidos: document.getElementById("apellidosCrear").value.trim(),
             username: document.getElementById("usernameCrear").value.trim(),
             email: document.getElementById("emailCrear").value.trim(),
-            dni: dni.toUpperCase().trim(),
             password: document.getElementById("passwordCrear").value.trim(),
+            nombre: document.getElementById("nombreCrear").value.trim(),
+            activo: document.getElementById("activoCrear").value === "true"
         })
     })
         .then((r) => {
-            if (!r.ok) // Intentar leer mensaje de error del backend
-                return r.json().then((data) => {
-                    throw data.msg;
-                }).catch(() => {
-                    // Si no llega ningún JSON con mensaje de error personalizado
-                    throw new Error(`Error ${r.status}: ${r.statusText}`);
-                });
+            if (!r.ok) return r.json()
+                .then((data) => {
+                    throw data.errorMsg || `Error ${r.status}: No se ha podido crear el usuario.`
+                })
             return r.json();
         }).then(usuarioCreado => {
             dialogCrearUsuario.close(); // se cierra el dialog (pop-up)
@@ -189,40 +157,35 @@ dialogCrearUsuario.addEventListener("close", () => {
 
 // Al pulsar el botón editar se llama a esta función que obtiene los datos del usuario por su id
 function cargarDialogEditar(id) {
-    fetch("/admin/usuarios/" + id)
-        .then((r) => {
-            if (!r.ok) throw new Error(`Error ${r.status}: ${r.statusText}`);
-            return r.json();
-        })
-        .then((u) => {
-            document.getElementById("usuarioPassEditadaId").value = u.id; // Por si pulsa cambiar contraseña
-            document.getElementById("idUsuarioEditado").value = u.id;
-            document.getElementById("nombreEditar").value = u.nombre;
-            document.getElementById("apellidosEditar").value = u.apellidos;
-            document.getElementById("usernameEditar").value = u.username;
-            document.getElementById("emailEditar").value = u.email;
-            document.getElementById("dniEditar").value = u.dni;
-            document.getElementById("activoEditar").value = u.activo
-            dialogEditarUsuario.showModal(); // Una vez cargados los datos se muestra el dialog
-        })
-        .catch(() => {
-            alert("Error al cargar los datos del usuario.");
-        });
-}
+    fetch("/admin/usuarios/" + id, {
+        method: "GET"
+    }).then((r) => {
+        if (!r.ok) return r.json()
+            .then((data) => {
+                throw data.errorMsg || `Error ${r.status}: No se han podido cargar los datos del usuario.`
+            });
+        return r.json();
+    })
+    .then((u) => {
+        document.getElementById("usuarioPassEditadaId").value = u.id; // Guardo el id del usuario por si selecciona cambiar contraseña
 
+        document.getElementById("idUsuarioEditado").value = u.id;
+        document.getElementById("usernameEditar").value = u.username;
+        document.getElementById("emailEditar").value = u.email;
+        document.getElementById("nombreEditar").value = u.nombre;
+        document.getElementById("activoEditar").value = u.activo
+        dialogEditarUsuario.showModal(); // Una vez cargados los datos se muestra el dialog
+    })
+    .catch((error) => {
+        alert(error);
+    });
+}
 
 // Al enviar el formulario se llama a la función editar usuario
 document.getElementById("formEditarUsuario").onsubmit = (e) => {
     e.preventDefault();
 
-    var dni = document.getElementById("dniEditar").value;
-
-    if (!validarDNI(dni)) {
-        alert("DNI inválido. Debe tener 8 dígitos y 1 letra");
-        return;
-    }
-
-    // Se obtiene el dni del usuario en el que se clicó el botón
+    // Se obtiene el id del usuario en el que se clicó el botón
     var id = document.getElementById("idUsuarioEditado").value;
 
     editarUsuario(id);
@@ -235,28 +198,22 @@ function editarUsuario(id) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            nombre: document.getElementById("nombreEditar").value.trim(),
-            apellidos: document.getElementById("apellidosEditar").value.trim(),
             username: document.getElementById("usernameEditar").value.trim(),
             email: document.getElementById("emailEditar").value.trim(),
-            dni: document.getElementById("dniEditar").value.toUpperCase().trim(),
+            nombre: document.getElementById("nombreEditar").value.trim(),
             activo: document.getElementById("activoEditar").value === "true"
             // === "true" es true (boolean) si coincide, y si no false (boolean)
-            // de esta manera conseguimos que devuelva un booleano y no un string
+            // de esta manera conseguimos devolver un booleano y no un string
         })
     }).then((r) => {
-        if (!r.ok) // Intentar leer mensaje de error del backend
-            return r.json().then((data) => {
-                throw data.msg;
-            }).catch(() => {
-                // Si no llega ningún JSON con mensaje de error personalizado
-                throw new Error(`Error ${r.status}: ${r.statusText}`);
+        if (!r.ok) return r.json().then((data) => {
+                throw data.errorMsg || `Error ${r.status}: No se ha podido actualizar usuario.`
             });
         dialogEditarUsuario.close(); // Se cierra el dialog
         cargarUsuarios(); // Se recargan los datos mostrados en la tabla
     })
     .catch((error) => {
-        alert("Error al editar los datos del usuario. " + error);
+        alert(error);
     });
 }
 
@@ -270,7 +227,6 @@ document.getElementById("btnCambiarPassword").onclick = () => {
     dialogCambiarPassword.showModal();
 }
 
-var msgPassError = document.getElementById("msgPassError");
 
 // Al enviar el formulario se comprueba que la contraseña nueva coincida en ambos campos
 // si coinciden, se llama a la funcion cambiarPassword
@@ -298,19 +254,15 @@ function cambiarPassword(passNueva) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            id: id,
             passwordActual: passActual,
             passwordNueva: passNueva
         })
     })
         .then((r) => {
             if (!r.ok) {
-                // Intentar leer mensaje de error del backend
-                return r.json().then((data) => {
-                    throw data.mensaje;
-                }).catch(() => {
-                    // Si no llega ningún JSON con mensaje de error se usa uno genérico
-                    throw "Error. No se ha podido cambiar la contraseña.";
+                return r.json()
+                    .then((data) => {
+                        throw data.errorMsg || `Error ${r.status}: No se ha podido cambiar la contraseña.`
                 });
             }
             // Se muestra un mensaje de éxito
@@ -363,16 +315,25 @@ function cargarDialogAsignarRoles(id) {
     document.getElementById("msgRolesError").classList.add("d-none");
 
     // Cargar roles existentes
-    fetch("/admin/usuarios/roles")
+    fetch("/admin/usuarios/roles", {
+        method: "GET"
+    })
         .then((r) => {
-            if (!r.ok) throw new Error("Error al cargar roles.");
+            if (!r.ok) {
+                return r.json()
+                    .then(data => { throw data.errorMsg || `Error ${r.status}: No se han podido cargar roles existentes.`
+                    });
+            }
             return r.json();
         })
         .then((rolesDisponibles) => {
             // Cargar datos del usuario con sus roles actuales
             return fetch("/admin/usuarios/" + id)
                 .then((r) => {
-                    if (!r.ok) throw new Error("Error al cargar usuario");
+                    if (!r.ok)
+                        return r.json()
+                            .then(data => { throw data.errorMsg || `Error ${r.status}: No se ha podido cargar usuario.`
+                        });
                     return r.json();
                 })
                 .then((usuario) => {
@@ -400,8 +361,8 @@ function cargarDialogAsignarRoles(id) {
                     dialogAsignarRoles.showModal(); // Se muestra el dialog
                 });
         })
-        .catch(() => {
-            alert("Error al cargar datos de roles.");
+        .catch((error) => {
+            alert(error);
         });
 }
 
@@ -436,12 +397,14 @@ function asignarRoles() {
         body: JSON.stringify(rolesSeleccionados)
     })
         .then((r) => {
-            if (!r.ok) throw new Error("Error al actualizar roles");
+            if (!r.ok) return r.json()
+                .then(data => {throw data.errorMsg || `Error: ${r.status}. No se han podido actualizar roles.`
+                });
             dialogAsignarRoles.close(); // Se cierra el dialog
             cargarUsuarios(); // Se recargan los datos mostrados en la tabla
         })
-        .catch(() => {
-            msgRolesError.textContent = "Error al actualizar los roles del usuario.";
+        .catch((error) => {
+            msgRolesError.textContent = error;
             msgRolesError.classList.remove("d-none");
         });
 }

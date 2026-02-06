@@ -36,7 +36,7 @@ public class AdminController {
     //      USUARIOS
     // ···················
 
-    // Crear un nuevo usuario (metodo POST)
+    // Crear un nuevo usuario
     @PostMapping("/usuarios")
     public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario, HttpSession session) {
         usuarioService.comprobarAdmin(session);
@@ -44,19 +44,19 @@ public class AdminController {
             UsuarioDTO nuevoUsuario = usuarioService.crearUsuario(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
         }
     }
 
-    // Obtener todos los usuarios (metodo GET)
+    // Obtener todos los usuarios
     @GetMapping("/usuarios")
-    public ResponseEntity<List<UsuarioDTO>> obtenerUsuarios(HttpSession session) {
+    public ResponseEntity<?> obtenerUsuarios(HttpSession session) {
         usuarioService.comprobarAdmin(session);
         List<UsuarioDTO> usuarios = usuarioService.obtenerUsuarios();
         return ResponseEntity.ok(usuarios);
     }
 
-    // Actualizar usuario (metodo PUT)
+    // Actualizar usuario
     // (Se utiliza PathVariable para asegurarnos de actualizar el usuario correspondiente)
     @PutMapping("/usuarios/{id}")
     public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioUpdateDTO usuarioActualizado, HttpSession session) {
@@ -67,11 +67,11 @@ public class AdminController {
             UsuarioDTO usuario = usuarioService.actualizarUsuario(id, usuarioActualizado);
             return ResponseEntity.ok(usuario);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
         }
     }
 
-    // Obtener usuario por ID (metodo GET)
+    // Obtener usuario por ID
     @GetMapping("/usuarios/{id}")
     public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
@@ -79,27 +79,29 @@ public class AdminController {
         return ResponseEntity.ok(usuario);
     }
 
-    // Cambiar estado del usuario (activo/inactivo) (metodo PUT)
+    // Cambiar estado del usuario (activo/inactivo)
     @PutMapping("/usuarios/{id}/estado")
-    public ResponseEntity<Void> cambiarEstado(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> cambiarEstadoUsuario(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
         usuarioService.interruptorEstado(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Eliminar un usuario (metodo DELETE)
+    // Eliminar un usuario
     @DeleteMapping("/usuarios/{id}")
-    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Cambiar contraseña (metodo PUT)
+    // Cambiar contraseña
     @PutMapping("/usuarios/{id}/password")
-    public ResponseEntity<?> cambiarPassword(
+    public ResponseEntity<?> cambiarPasswordUsuario(
             @PathVariable Long id,
-            @RequestBody Map<String, String> body) {
+            @RequestBody Map<String, String> body, HttpSession session) {
+
+        usuarioService.comprobarAdmin(session);
 
         String passwordActual = body.get("passwordActual");
         String passwordNueva = body.get("passwordNueva");
@@ -111,30 +113,30 @@ public class AdminController {
             // Contraseña actual incorrecta o contraseña nueva vacía
             return ResponseEntity
                     .badRequest()
-                    .body(Map.of("mensaje", e.getMessage()));
+                    .body(Map.of("errorMsg", e.getMessage()));
         } catch (IllegalStateException e) {
             // Usuario inactivo
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("mensaje", e.getMessage()));
+                    .body(Map.of("errorMsg", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensaje", "Error al cambiar la contraseña"));
+                    .body(Map.of("errorMsg", "Error al cambiar la contraseña"));
         }
     }
 
-    // Obtener todos los roles (metodo GET)
+    // Obtener todos los roles
     @GetMapping("/usuarios/roles")
-    public ResponseEntity<?>obtenerRoles(HttpSession session) {
+    public ResponseEntity<?>obtenerRolesUsuario(HttpSession session) {
         usuarioService.comprobarAdmin(session);
         List<Rol> roles = rolService.obtenerRoles();
         return ResponseEntity.ok(roles);
     }
 
-    // Asignar roles (metodo PUT)
+    // Asignar roles
     @PutMapping("/usuarios/roles/{id}")
-    public ResponseEntity<?> actualizarRoles(@PathVariable Long id, @RequestBody List<Long> idsRoles, HttpSession session) {
+    public ResponseEntity<?> actualizarRolesUsuario(@PathVariable Long id, @RequestBody List<Long> idsRoles, HttpSession session) {
         usuarioService.comprobarAdmin(session);
         usuarioService.actualizarRolesUsuario(id, idsRoles);
         return ResponseEntity.noContent().build();
@@ -145,7 +147,7 @@ public class AdminController {
     //      PACIENTES
     // ···················
 
-    // Crear un nuevo paciente (metodo POST)
+    // Crear un nuevo paciente
     @PostMapping("/pacientes")
     public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente, HttpSession session) {
         usuarioService.comprobarAdmin(session);
@@ -153,15 +155,54 @@ public class AdminController {
             PacienteDTO nuevoPaciente = pacienteService.crearPaciente(paciente);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("msg", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
         }
     }
 
-    // Obtener todos los pacientes (metodo GET)
+    // Obtener todos los pacientes
     @GetMapping("/pacientes")
     public ResponseEntity<?> obtenerPacientes(HttpSession session) {
         usuarioService.comprobarAdmin(session);
         List<PacienteDTO> pacientes = pacienteService.obtenerPacientes();
         return ResponseEntity.ok(pacientes);
+    }
+
+    // Actualizar paciente
+    // (Se utiliza PathVariable para asegurarnos de actualizar el paciente correspondiente)
+    @PutMapping("/pacientes/{id}")
+    public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteActualizado, HttpSession session) {
+        usuarioService.comprobarMedico(session);
+
+        // Se actualiza el paciente en la base de datos
+        try {
+            PacienteDTO paciente = pacienteService.actualizarPaciente(id, pacienteActualizado);
+            return ResponseEntity.ok(paciente);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
+
+    // Obtener paciente por ID
+    @GetMapping("/pacientes/{id}")
+    public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarMedico(session);
+        PacienteDTO paciente = pacienteService.obtenerPacientePorId(id);
+        return ResponseEntity.ok(paciente);
+    }
+
+    // Cambiar estado del paciente (activo/inactivo)
+    @PutMapping("/pacientes/{id}/estado")
+    public ResponseEntity<?> cambiarEstadoPaciente(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarMedico(session);
+        pacienteService.interruptorEstado(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Eliminar un paciente
+    @DeleteMapping("/pacientes/{id}")
+    public ResponseEntity<?> eliminarPaciente(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarMedico(session);
+        pacienteService.eliminarPaciente(id);
+        return ResponseEntity.noContent().build();
     }
 }

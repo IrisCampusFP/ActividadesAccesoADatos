@@ -30,10 +30,7 @@ public class MedicoController {
     @Autowired
     PacienteService pacienteService;
 
-    @Autowired
-    RolService rolService;
-
-    // Crear un nuevo paciente (metodo POST)
+    // Crear un nuevo paciente
     @PostMapping("/pacientes")
     public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente, HttpSession session) {
         usuarioService.comprobarMedico(session);
@@ -45,7 +42,7 @@ public class MedicoController {
         }
     }
 
-    // Obtener todos los pacientes (metodo GET)
+    // Obtener todos los pacientes
     @GetMapping("/pacientes")
     public ResponseEntity<?> obtenerPacientes(HttpSession session) {
         usuarioService.comprobarMedico(session);
@@ -54,7 +51,7 @@ public class MedicoController {
         return ResponseEntity.ok(pacientes);
     }
 
-    // Actualizar paciente (metodo PUT)
+    // Actualizar paciente
     // (Se utiliza PathVariable para asegurarnos de actualizar el paciente correspondiente)
     @PutMapping("/pacientes/{id}")
     public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteActualizado, HttpSession session) {
@@ -69,7 +66,7 @@ public class MedicoController {
         }
     }
 
-    // Obtener paciente por ID (metodo GET)
+    // Obtener paciente por ID
     @GetMapping("/pacientes/{id}")
     public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarMedico(session);
@@ -77,17 +74,17 @@ public class MedicoController {
         return ResponseEntity.ok(paciente);
     }
 
-    // Cambiar estado del paciente (activo/inactivo) (metodo PUT)
+    // Cambiar estado del paciente (activo/inactivo)
     @PutMapping("/pacientes/{id}/estado")
-    public ResponseEntity<Void> cambiarEstado(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarMedico(session);
         pacienteService.interruptorEstado(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Eliminar un paciente (metodo DELETE)
+    // Eliminar un paciente
     @DeleteMapping("/pacientes/{id}")
-    public ResponseEntity<Void> eliminarPaciente(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarPaciente(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarMedico(session);
         pacienteService.eliminarPaciente(id);
         return ResponseEntity.noContent().build();

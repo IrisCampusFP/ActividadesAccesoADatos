@@ -25,5 +25,4 @@ public class UsuarioDTO implements Serializable {
     private Boolean activo;
     private LocalDateTime fechaCreacion;
     private Set<Rol> roles;
-    private List<Paciente> pacientes;
 }

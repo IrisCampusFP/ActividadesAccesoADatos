@@ -34,13 +34,14 @@ public class LoginController {
                 Usuario usuario = usuarioService.obtenerUsuarioPorEmail(loginRequestDTO.getEmail());
 
                 Set<Rol> roles = new HashSet<>(usuario.getRoles());
-                List<Paciente> pacientes = usuario.getPacientes();
                 UsuarioDTO usuarioDTO = new UsuarioDTO(usuario.getId(), usuario.getUsername(), usuario.getEmail(),
-                        usuario.getNombre(), usuario.getActivo(), usuario.getFechaCreacion(), roles, pacientes);
+                        usuario.getNombre(), usuario.getActivo(), usuario.getFechaCreacion(), roles);
                 session.setAttribute("usuarioDTO", usuarioDTO);
                 return ResponseEntity.ok(usuarioDTO);
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "Contraseña incorrecta"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", e.getMessage())); // 403 Forbidden en caso de bloqueo
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("mensaje", e.getMessage()));
         }

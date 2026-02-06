@@ -94,8 +94,7 @@ public class UsuarioService {
                 usuario.getNombre(),
                 usuario.getActivo(),
                 usuario.getFechaCreacion(),
-                usuario.getRoles(),
-                usuario.getPacientes()
+                usuario.getRoles()
         );
     }
 
@@ -173,15 +172,15 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No se ha encontrado ningún usuario con id: " + id));
 
         if (!usuario.getActivo()) {
-            throw new IllegalStateException("El usuario está desactivado");
+            throw new IllegalStateException("El usuario está desactivado.");
         }
 
         if (!usuario.checkPassword(passwordActual)) {
-            throw new IllegalArgumentException("Contraseña actual incorrecta");
+            throw new IllegalArgumentException("Contraseña actual incorrecta.");
         }
 
         if (passwordNueva == null || passwordNueva.isBlank()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            throw new IllegalArgumentException("La contraseña no puede estar vacía.");
         }
 
         usuario.setPasswordHash(passwordNueva);
@@ -195,12 +194,12 @@ public class UsuarioService {
      */
     @Transactional
     public UsuarioDTO actualizarUsuario(Long id, UsuarioUpdateDTO usuarioActualizado) {
-        if(usuarioActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos");
+        if(usuarioActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
 
         Optional<Usuario> usuarioAActualizar = usuarioRepository.findById(id);
 
         if (usuarioAActualizar.isEmpty()) {
-            throw new IllegalStateException("El usuario no existe en la base de datos");
+            throw new IllegalStateException("El usuario no existe en la base de datos.");
         } else {
             Usuario usuario = usuarioAActualizar.get();
 
@@ -225,10 +224,10 @@ public class UsuarioService {
 
         // Obtengo el usuario por su id
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado."));
 
         if (idsRoles == null || idsRoles.isEmpty()) {
-            throw new IllegalArgumentException("Un usuario debe tener al menos un rol");
+            throw new IllegalArgumentException("Un usuario debe tener al menos un rol.");
         }
 
         // Creo un HashSet con los roles seleccionados
@@ -307,19 +306,19 @@ public class UsuarioService {
     // COMPROBACIONES CAMPOS ÚNICOS
 
     public void comprobarUsernameUnico(String username) {
-        if(usuarioRepository.existsByUsername(username)) throw new IllegalArgumentException("Ya existe un usuario con ese username");
+        if(usuarioRepository.existsByUsername(username)) throw new IllegalArgumentException("Ya existe un usuario con ese username.");
     }
 
     public void comprobarEmailUnico(String email) {
-        if(usuarioRepository.existsByEmail(email)) throw new IllegalArgumentException("Ya existe un usuario con ese email");
+        if(usuarioRepository.existsByEmail(email)) throw new IllegalArgumentException("Ya existe un usuario con ese email.");
     }
 
     public void comprobarUsernameUnicoEditar(String username, String usernameUsuarioEditado) {
-        if(usuarioRepository.existsByUsername(username) && !(username.equalsIgnoreCase(usernameUsuarioEditado))) throw new IllegalArgumentException("Ya existe un usuario con ese username");
+        if(usuarioRepository.existsByUsername(username) && !(username.equalsIgnoreCase(usernameUsuarioEditado))) throw new IllegalArgumentException("Ya existe un usuario con ese username.");
     }
 
     public void comprobarEmailUnicoEditar(String email, String emailUsuarioEditado) {
-        if(usuarioRepository.existsByEmail(email) && !(email.equalsIgnoreCase(emailUsuarioEditado))) throw new IllegalArgumentException("Ya existe un usuario con ese email");
+        if(usuarioRepository.existsByEmail(email) && !(email.equalsIgnoreCase(emailUsuarioEditado))) throw new IllegalArgumentException("Ya existe un usuario con ese email.");
     }
 
 }
