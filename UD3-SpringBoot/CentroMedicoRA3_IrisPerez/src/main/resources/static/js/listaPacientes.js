@@ -1,5 +1,5 @@
-var tbodyPacientes = document.getElementById("tBodyPacientes");
-var recuadroAlert = document.getElementById("recuadroAlert");
+const tbodyPacientes = document.getElementById("tBodyPacientes");
+const recuadroAlert = document.getElementById("recuadroAlert");
 
 // Mostrar nombre del usuario (recepcionista) que esté usando el panel en el title
 fetch("/user/datos")

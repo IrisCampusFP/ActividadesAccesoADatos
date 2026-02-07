@@ -2,30 +2,18 @@ package com.dam.accesodatos.centromedicora3_irisperez.service;
 
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteUpdateDTO;
-import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
-import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioUpdateDTO;
-import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
 import com.dam.accesodatos.centromedicora3_irisperez.repository.PacienteRepository;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
-import com.dam.accesodatos.centromedicora3_irisperez.repository.RolRepository;
-import com.dam.accesodatos.centromedicora3_irisperez.repository.UsuarioRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * SERVICIO: PacienteService
- *
+
  * Anotaciones utilizadas:
  * - @Service: Marca la clase como un componente de servicio de Spring.
  * - @Transactional: Gestiona automáticamente las transacciones.
@@ -41,9 +29,6 @@ public class PacienteService {
     public PacienteService(PacienteRepository pacienteRepository) {
         this.pacienteRepository = pacienteRepository;
     }
-
-    @Autowired
-    private RolRepository rolRepository;
 
     @Transactional(readOnly = true)
     public PacienteDTO toDTO(Paciente paciente) {
@@ -186,11 +171,7 @@ public class PacienteService {
 
     public void interruptorEstado(Long id) {
         Paciente u = pacienteRepository.findById(id).orElseThrow(() -> new IllegalStateException("No se ha encontrado ningún paciente con id: " + id));
-        if (u.getActivo()) {
-            u.setActivo(false);
-        } else  {
-            u.setActivo(true);
-        }
+        u.setActivo(!u.getActivo()); // Cambia al estado contrario
         pacienteRepository.save(u);
     }
 

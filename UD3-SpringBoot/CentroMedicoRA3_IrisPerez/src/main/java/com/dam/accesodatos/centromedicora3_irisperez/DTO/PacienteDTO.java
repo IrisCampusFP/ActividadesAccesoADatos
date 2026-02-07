@@ -1,7 +1,5 @@
 package com.dam.accesodatos.centromedicora3_irisperez.DTO;
 
-import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
-import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,8 +9,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor

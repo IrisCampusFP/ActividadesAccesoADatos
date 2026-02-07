@@ -1,9 +1,9 @@
-var tbodyPacientes = document.getElementById("tBodyPacientes");
-var recuadroAlert = document.getElementById("recuadroAlert");
+const tbodyPacientes = document.getElementById("tBodyPacientes");
+const recuadroAlert = document.getElementById("recuadroAlert");
 
-var dialogCrearPaciente = document.getElementById("dialogCrearPaciente");
-var dialogEditarPaciente = document.getElementById("dialogEditarPaciente");
-var dialogAsignarMedico = document.getElementById("dialogAsignarMedico");
+const dialogCrearPaciente = document.getElementById("dialogCrearPaciente");
+const dialogEditarPaciente = document.getElementById("dialogEditarPaciente");
+const dialogAsignarMedico = document.getElementById("dialogAsignarMedico");
 
 // Mostrar nombre del usuario (admin) que esté usando el panel en el title
 fetch("/user/datos")
@@ -101,14 +101,14 @@ document.getElementById("btnCrearPaciente").onclick = () => {
     dialogCrearPaciente.showModal();
 };
 
-var msgCrearError = document.getElementById("msgCrearError");
+const msgCrearError = document.getElementById("msgCrearError");
 
 // Al enviar el formulario se llama a la función crear paciente
 document.getElementById("formCrearPaciente").onsubmit = e => {
     e.preventDefault();
 
     // Validación del DNI
-    var dni = document.getElementById("dniCrear").value.trim();
+    const dni = document.getElementById("dniCrear").value.trim();
 
     if (!validarDNI(dni)) {
         msgCrearError.textContent = "DNI inválido. Debe tener 8 dígitos y 1 letra";
@@ -184,7 +184,7 @@ document.getElementById("formEditarPaciente").onsubmit = e => {
     e.preventDefault();
 
     // Validación del DNI
-    var dni = document.getElementById("dniEditar").value.trim();
+    const dni = document.getElementById("dniEditar").value.trim();
 
     if (!validarDNI(dni)) {
         alert("DNI inválido. Debe tener 8 dígitos y 1 letra")
@@ -285,12 +285,12 @@ function cargarDialogAsignarMedico(id) {
                     // Mostrar nombre del paciente en el dialog
                     document.getElementById("nombrePacienteAsignarMedico").textContent = paciente.nombre + " " + paciente.apellidos;
 
-                    // Obtener el id del medico del paciente
-                    var medicoPaciente = paciente.medico ? paciente.medico.id : null;
+                    // Obtener id del médico del paciente
+                    const medicoPaciente = paciente.medico ? paciente.medico.id : null;
 
                     // Se genera el input tipo radio dinámicamente, con el médico del paciente seleccionado por defecto
-                    var radioMedicosDiv = document.getElementById("radioMedicosDiv");
-                    var htmlRadioMedicos = "";
+                    const radioMedicosDiv = document.getElementById("radioMedicosDiv");
+                    let htmlRadioMedicos = "";
 
                     medicosDisponibles.forEach((medico) => {
                         htmlRadioMedicos += `
@@ -317,12 +317,12 @@ document.getElementById("formAsignarMedico").onsubmit = (e) => {
     asignarMedico();
 };
 
-var msgDialogMedicoError = document.getElementById("msgDialogMedicoError");
+const msgDialogMedicoError = document.getElementById("msgDialogMedicoError");
 
 // Función que envía el médico seleccionado al backend
 function asignarMedico() {
-    var id = document.getElementById("idPacienteAsignarMedico").value;
-    var medicoSeleccionado = document.querySelector("input[name='radioMedicos']:checked");
+    const id = document.getElementById("idPacienteAsignarMedico").value;
+    const medicoSeleccionado = document.querySelector("input[name='radioMedicos']:checked");
 
     // Se comprueba que se haya seleccionado un médico
     if (!medicoSeleccionado) {

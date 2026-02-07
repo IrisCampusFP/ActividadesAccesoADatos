@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * REPOSITORIO: UsuarioRepository
  * Interfaz que proporciona acceso a datos para la entidad Usuario.
- *
+
  * Al extender JpaRepository, heredamos automáticamente métodos CRUD:
  * - save(entity): Guarda o actualiza un usuario
  * - findById(id): Busca un usuario por su ID
@@ -19,7 +19,7 @@ import java.util.Optional;
  * - deleteById(id): Elimina un usuario por su ID
  * - count(): Cuenta el total de usuarios
  * - existsById(id): Verifica si existe un usuario
- *
+
  * Spring Data JPA implementa automáticamente esta interfaz
  * en tiempo de ejecución (no necesitamos escribir código SQL).
  */

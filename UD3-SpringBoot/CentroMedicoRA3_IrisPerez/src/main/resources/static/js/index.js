@@ -7,8 +7,8 @@ fetch("/killSession")
 formulario.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    var emailRecibido = email.value.trim()
-    var passwordRecibida = password.value.trim();
+    const emailRecibido = email.value.trim();
+    const passwordRecibida = password.value.trim();
 
     fetch("/login", {
         method: "POST",

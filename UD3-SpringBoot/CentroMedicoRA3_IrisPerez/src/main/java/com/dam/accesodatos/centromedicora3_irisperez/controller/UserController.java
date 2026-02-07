@@ -15,7 +15,7 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/datos")
-    public ResponseEntity<UsuarioDTO> obtenerDatosUsuario(HttpSession session) {
+    public ResponseEntity<?> obtenerDatosUsuario(HttpSession session) {
 
         UsuarioDTO usuarioDTO = (UsuarioDTO) session.getAttribute("usuarioDTO");
 

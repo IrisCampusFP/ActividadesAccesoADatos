@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +19,7 @@ import java.util.Set;
 
 /**
  * SERVICIO: UsuarioService
- *
+
  * Anotaciones utilizadas:
  * - @Service: Marca la clase como un componente de servicio de Spring.
  * - @Transactional: Gestiona automáticamente las transacciones.
@@ -177,7 +175,7 @@ public class UsuarioService {
 
     /**
      * Cambia la contraseña de un usuario verificando la contraseña actual.
-     *
+
      * No se cambia la contraseña si:
      * - El usuario no existe
      * - La contraseña actual no es correcta
@@ -262,11 +260,7 @@ public class UsuarioService {
     // Metodo que cambia el estado del usuario al contrario (activo -> inactivo, inactivo -> activo)
     public void interruptorEstado(Long id) {
         Usuario u = usuarioRepository.findById(id).orElseThrow(() -> new IllegalStateException("No se ha encontrado ningún usuario con id: " + id));
-        if (u.getActivo()) {
-            u.setActivo(false);
-        } else  {
-            u.setActivo(true);
-        }
+        u.setActivo(!u.getActivo()); // Cambia al estado contrario
         usuarioRepository.save(u);
     }
 
@@ -291,7 +285,7 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
         }
 
-        if (!usuario.getRoles().stream().anyMatch(r -> r.getNombre().equalsIgnoreCase("ADMIN")))
+        if (usuario.getRoles().stream().noneMatch(r -> r.getNombre().equalsIgnoreCase("ADMIN")))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 
@@ -303,7 +297,7 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
         }
 
-        if (!usuario.getRoles().stream().anyMatch(r -> r.getNombre().equalsIgnoreCase("MEDICO")))
+        if (usuario.getRoles().stream().noneMatch(r -> r.getNombre().equalsIgnoreCase("MEDICO")))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 
@@ -315,7 +309,7 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
         }
 
-        if (!usuario.getRoles().stream().anyMatch(r -> r.getNombre().equalsIgnoreCase("RECEPCION")))
+        if (usuario.getRoles().stream().noneMatch(r -> r.getNombre().equalsIgnoreCase("RECEPCION")))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 

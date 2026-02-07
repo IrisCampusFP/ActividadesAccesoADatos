@@ -3,7 +3,6 @@ package com.dam.accesodatos.centromedicora3_irisperez.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;

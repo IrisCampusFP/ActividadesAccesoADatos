@@ -1,10 +1,9 @@
-var tbodyUsuarios = document.getElementById("tBodyUsuarios");
-var recuadroAlert = document.getElementById("recuadroAlert");
-
-var dialogCrearUsuario = document.getElementById("dialogCrearUsuario");
-var dialogEditarUsuario = document.getElementById("dialogEditarUsuario");
-var dialogCambiarPassword = document.getElementById("dialogCambiarPassword");
-var dialogAsignarRoles = document.getElementById("dialogAsignarRoles");
+const tbodyUsuarios = document.getElementById("tBodyUsuarios");
+const recuadroAlert = document.getElementById("recuadroAlert");
+const dialogCrearUsuario = document.getElementById("dialogCrearUsuario");
+const dialogEditarUsuario = document.getElementById("dialogEditarUsuario");
+const dialogCambiarPassword = document.getElementById("dialogCambiarPassword");
+const dialogAsignarRoles = document.getElementById("dialogAsignarRoles");
 
 // Mostrar nombre del admin en el title
 fetch("/user/datos")
@@ -97,7 +96,7 @@ document.getElementById("btnCrearUsuario").onclick = () => {
     dialogCrearUsuario.showModal();
 };
 
-var msgCrearError = document.getElementById("msgCrearError");
+const msgCrearError = document.getElementById("msgCrearError");
 
 // Al enviar el formulario se llama a la función crear usuario
 document.getElementById("formCrearUsuario").onsubmit = (e) => {
@@ -175,7 +174,7 @@ document.getElementById("formEditarUsuario").onsubmit = (e) => {
     e.preventDefault();
 
     // Se obtiene el id del usuario en el que se clicó el botón
-    var id = document.getElementById("idUsuarioEditado").value;
+    const id = document.getElementById("idUsuarioEditado").value;
 
     editarUsuario(id);
 };
@@ -183,7 +182,7 @@ document.getElementById("formEditarUsuario").onsubmit = (e) => {
 // Se hace un fetch (metodo PUT) que envía los datos actualizados al backend.
 // En el backend se sustituyen los datos originales del usuario por los modificados.
 function editarUsuario(id) {
-    return fetch("/admin/usuarios/" + id, {
+    fetch("/admin/usuarios/" + id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -209,6 +208,9 @@ function editarUsuario(id) {
 
 // CAMBIAR CONTRASEÑA
 
+const msgPassError = document.getElementById("msgPassError");
+
+
 // Se muestra el dialog al pulsar el boton 'Cambiar contraseña'
 document.getElementById("btnCambiarPassword").onclick = () => {
     dialogEditarUsuario.close() // Se oculta el dialog editar usuario
@@ -222,8 +224,8 @@ document.getElementById("btnCambiarPassword").onclick = () => {
 document.getElementById("formCambiarPassword").onsubmit = (e) => {
     e.preventDefault();
 
-    var passNueva = document.getElementById("passNueva").value.trim();
-    var passNuevaConfirm = document.getElementById("passNuevaConfirm").value.trim();
+    const passNueva = document.getElementById("passNueva").value.trim();
+    const passNuevaConfirm = document.getElementById("passNuevaConfirm").value.trim();
 
     // Si no coinciden la contraseña nueva y la confirmación se muestra un error
     if (passNueva !== passNuevaConfirm) {
@@ -236,8 +238,8 @@ document.getElementById("formCambiarPassword").onsubmit = (e) => {
 };
 
 function cambiarPassword(passNueva) {
-    var id = document.getElementById("usuarioPassEditadaId").value;
-    var passActual = document.getElementById("passActual").value;
+    const id = document.getElementById("usuarioPassEditadaId").value;
+    const passActual = document.getElementById("passActual").value;
 
     fetch("/admin/usuarios/" + id + "/password", {
         method: "PUT",
@@ -330,11 +332,11 @@ function cargarDialogAsignarRoles(id) {
                     document.getElementById("nombreUsuarioAsignarRoles").textContent = usuario.nombre + " " + usuario.apellidos + " (" + usuario.username + "). Id: " + usuario.id;
 
                     // Obtener los ids de los roles que tiene el usuario
-                    var rolesUsuario = usuario.roles.map(r => r.id);
+                    const rolesUsuario = usuario.roles.map(r => r.id);
 
                     // Se genera el checkbox dinámicamente, seleccionando los roles que ya tiene asignados el usuario
-                    var checkboxRoles = document.getElementById("checkboxRoles");
-                    var htmlCheckboxRoles = "";
+                    const checkboxRoles = document.getElementById("checkboxRoles");
+                    let htmlCheckboxRoles = "";
 
                     rolesDisponibles.forEach((rol) => {
                         htmlCheckboxRoles += `
@@ -361,13 +363,13 @@ document.getElementById("formAsignarRoles").onsubmit = (e) => {
     asignarRoles();
 };
 
-var msgRolesError = document.getElementById("msgRolesError");
+const msgRolesError = document.getElementById("msgRolesError");
 
 // Función que envía los roles seleccionados al backend
 function asignarRoles() {
-    var id = document.getElementById("idUsuarioAsignarRoles").value;
-    var checkboxMarcados = document.querySelectorAll("#checkboxRoles input[type='checkbox']:checked");
-    var rolesSeleccionados = [];
+    const id = document.getElementById("idUsuarioAsignarRoles").value;
+    const checkboxMarcados = document.querySelectorAll("#checkboxRoles input[type='checkbox']:checked");
+    const rolesSeleccionados = [];
 
     checkboxMarcados.forEach((cb) => {
         rolesSeleccionados.push(parseInt(cb.value));

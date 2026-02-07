@@ -3,11 +3,7 @@ package com.dam.accesodatos.centromedicora3_irisperez.controller;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteUpdateDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
-import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioUpdateDTO;
-import com.dam.accesodatos.centromedicora3_irisperez.entity.Rol;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
-import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
-import com.dam.accesodatos.centromedicora3_irisperez.service.RolService;
 import com.dam.accesodatos.centromedicora3_irisperez.service.PacienteService;
 import com.dam.accesodatos.centromedicora3_irisperez.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -15,11 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/medico")
