@@ -36,50 +36,39 @@ function cargarUsuarios() {
             return;
         }
         // Se muestran los datos de cada usuario fila por fila (tr) en el tBody
-        var tBody = "";
+        let tBody = "";
         usuarios.forEach(u => {
             tBody += `
-            <tr>
-                <td>${u.id}</td>
-                <td>${u.username}</td>
-                <td>${u.email}</td>
-                <td>${u.nombre}</td>
-                <td>${mostrarEstado(u.activo)}</td>
-                <td>${mostrarFecha(u.fechaCreacion)}</td>
-                <td>${mostrarRoles(u.roles)}</td>
-                <!-- Botones para acciones CRUD -->
-                <td>
-                    <div class="d-flex gap-2 col-11">
-                        <button class="btn btn-sm btn-outline-primary col-3"
-                            onclick="cargarDialogEditar(${u.id})">Editar</button>
-                        <button class="btn btn-sm btn-outline-success col-3" 
-                            onclick="cargarDialogAsignarRoles(${u.id})">Asignar roles</button>
-                        <button class="btn btn-sm btn-outline-warning col-3"
-                            onclick="cambiarEstado(${u.id})">${u.activo ? "Desactivar" : "Activar"}
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger col-3"
-                            onclick="eliminarUsuario(${u.id})">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `;
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>${u.email}</td>
+                    <td>${u.nombre}</td>
+                    <td>${u.activo ? '<span class="badge text-bg-success">Activo</span>' : '<span class="badge text-bg-danger">Inactivo</span>'}</td>
+                    <td>${u.fechaCreacion ? new Date(u.fechaCreacion).toLocaleString() : "-"}</td>
+                    <td>${mostrarRoles(u.roles)}</td>
+                    <!-- Botones para acciones CRUD -->
+                    <td>
+                        <div class="d-flex gap-2 col-11">
+                            <button class="btn btn-sm btn-outline-primary col-3"
+                                onclick="cargarDialogEditar(${u.id})">Editar</button>
+                            <button class="btn btn-sm btn-outline-success col-3" 
+                                onclick="cargarDialogAsignarRoles(${u.id})">Asignar roles</button>
+                            <button class="btn btn-sm btn-outline-warning col-3"
+                                onclick="cambiarEstado(${u.id})">${u.activo ? "Desactivar" : "Activar"}
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger col-3"
+                                onclick="eliminarUsuario(${u.id})">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
         });
         tbodyUsuarios.innerHTML = tBody;
     })
     .catch((error) => {
         mostrarError(error);
     })
-}
-
-function mostrarEstado(activo) {
-    if (activo) {
-        return '<span class="badge text-bg-success">Activo</span>';
-    }
-    return '<span class="badge text-bg-danger">Inactivo</span>';
-}
-
-function mostrarFecha(fecha) {
-    return fecha ? new Date(fecha).toLocaleString() : "-";
 }
 
 function mostrarRoles(roles) {
@@ -295,7 +284,7 @@ function cambiarEstado(id) {
 
 function eliminarUsuario(id) {
     // Se pide confirmación
-    if (!confirm("¿Estás segur@ de que quieres eliminar este usuario?\nId: " + id)) return;
+    if (!confirm("¿Estás seguro/a de que quieres eliminar este usuario?\nId: " + id)) return;
 
     // Se hace un fetch con metodo DELETE para eliminar el usuario de la base de datos
     fetch("/admin/usuarios/" + id, { method: "DELETE" })

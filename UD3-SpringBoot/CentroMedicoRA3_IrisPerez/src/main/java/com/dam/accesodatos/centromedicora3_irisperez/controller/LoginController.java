@@ -45,8 +45,6 @@ public class LoginController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("mensaje", e.getMessage()));
         }
-
-
     }
 
     @GetMapping("/killSession")

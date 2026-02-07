@@ -17,11 +17,11 @@ public class AccesoVistaController {
 
         if (usuario != null) {
             if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("ADMIN"))) {
-                return "ADMIN/menuAdminView";
+                return "ADMIN/menuAdmin";
             } else if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("MEDICO"))) {
                 return "MEDICO/gestionPacientesMedico";
             } else if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("RECEPCION"))) {
-                return "listaPacientes";
+                return "RECEPCION/listaPacientes";
             } else {
                 return "redirect:/killSession";
             }
@@ -40,7 +40,7 @@ public class AccesoVistaController {
             if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("ADMIN"))) {
                 return "ADMIN/gestionUsuarios";
             } else {
-                return "redirect:/killSession";
+                return "redirect:/vista";
             }
         } else {
             return "redirect:/killSession";
@@ -57,7 +57,7 @@ public class AccesoVistaController {
                     usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("MEDICO"))) {
                 return "ADMIN/gestionPacientesAdmin";
             } else {
-                return "redirect:/killSession";
+                return "redirect:/vista";
             }
         } else {
             return "redirect:/killSession";
@@ -74,7 +74,7 @@ public class AccesoVistaController {
                     usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("MEDICO"))) {
                 return "MEDICO/gestionPacientesMedico";
             } else {
-                return "redirect:/killSession";
+                return "redirect:/vista";
             }
         } else {
             return "redirect:/killSession";
@@ -90,7 +90,7 @@ public class AccesoVistaController {
             if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("RECEPCION"))) {
                 return "RECEPCION/listaPacientes";
             } else {
-                return "redirect:/killSession";
+                return "redirect:/vista";
             }
         } else {
             return "redirect:/killSession";

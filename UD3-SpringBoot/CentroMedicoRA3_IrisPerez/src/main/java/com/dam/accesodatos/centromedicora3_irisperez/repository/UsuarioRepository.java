@@ -2,6 +2,7 @@ package com.dam.accesodatos.centromedicora3_irisperez.repository;
 
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,4 +40,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     // Comprobar si existe un usuario con email
     boolean existsByEmail(String email);
+
+    // Obtener usuarios con rol 'MEDICO'
+    @Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.nombre = 'MEDICO'")
+    List<Usuario> obtenerUsuariosMedico();
 }

@@ -1,6 +1,7 @@
 package com.dam.accesodatos.centromedicora3_irisperez.controller;
 
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteDTO;
+import com.dam.accesodatos.centromedicora3_irisperez.DTO.PacienteUpdateDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.DTO.UsuarioUpdateDTO;
 import com.dam.accesodatos.centromedicora3_irisperez.entity.Paciente;
@@ -75,7 +76,7 @@ public class AdminController {
     @GetMapping("/usuarios/{id}")
     public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        UsuarioDTO usuario = usuarioService.obtenerUsuarioPorId(id);
+        UsuarioDTO usuario = usuarioService.obtenerUsuarioDTOPorId(id);
         return ResponseEntity.ok(usuario);
     }
 
@@ -142,6 +143,14 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    // Obtener médicos disponibles
+    @GetMapping("/usuarios/medico")
+    public ResponseEntity<?> obtenerUsuariosMedico(HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        List<UsuarioDTO> medicos = usuarioService.obtenerUsuariosMedico();
+        return ResponseEntity.ok(medicos);
+    }
+
 
     // ···················
     //      PACIENTES
@@ -170,8 +179,8 @@ public class AdminController {
     // Actualizar paciente
     // (Se utiliza PathVariable para asegurarnos de actualizar el paciente correspondiente)
     @PutMapping("/pacientes/{id}")
-    public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteActualizado, HttpSession session) {
-        usuarioService.comprobarMedico(session);
+    public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteUpdateDTO pacienteActualizado, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
 
         // Se actualiza el paciente en la base de datos
         try {
@@ -185,7 +194,7 @@ public class AdminController {
     // Obtener paciente por ID
     @GetMapping("/pacientes/{id}")
     public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long id, HttpSession session) {
-        usuarioService.comprobarMedico(session);
+        usuarioService.comprobarAdmin(session);
         PacienteDTO paciente = pacienteService.obtenerPacientePorId(id);
         return ResponseEntity.ok(paciente);
     }
@@ -193,7 +202,7 @@ public class AdminController {
     // Cambiar estado del paciente (activo/inactivo)
     @PutMapping("/pacientes/{id}/estado")
     public ResponseEntity<?> cambiarEstadoPaciente(@PathVariable Long id, HttpSession session) {
-        usuarioService.comprobarMedico(session);
+        usuarioService.comprobarAdmin(session);
         pacienteService.interruptorEstado(id);
         return ResponseEntity.noContent().build();
     }
@@ -201,8 +210,16 @@ public class AdminController {
     // Eliminar un paciente
     @DeleteMapping("/pacientes/{id}")
     public ResponseEntity<?> eliminarPaciente(@PathVariable Long id, HttpSession session) {
-        usuarioService.comprobarMedico(session);
+        usuarioService.comprobarAdmin(session);
         pacienteService.eliminarPaciente(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Asignar médico
+    @PutMapping("/pacientes/medico/{id}")
+    public ResponseEntity<?> actualizarMedicoPaciente(@PathVariable Long id, @RequestBody Long idMedico, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        pacienteService.actualizarMedicoPaciente(id, idMedico);
         return ResponseEntity.noContent().build();
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lista de pacientes (Recepcion)</title>
+    <title>Listado Pacientes (Recepción)</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/templates.css">
@@ -22,21 +22,22 @@
 
     <div id="recuadroAlert" class="alert alert-danger d-none" role="alert"></div>
 
-    <div class="card shadow-lg rounded-4 bg-dark text-light">
+    <div class="card shadow-lg rounded-4 bg-dark text-light text-center">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-dark table-hover align-middle mb-0">
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
                         <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th>Teléfono</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Historial</th>
+                        <th>Médico</th>
                         <th>Estado</th>
-                        <th>Fecha creación</th>
-                        <th>Rol / Roles</th>
-                        <th>Pacientes</th>
-                        <th>Acciones</th>
+                        <th>Fecha Creación</th>
                     </tr>
                     </thead>
                     <tbody id="tBodyPacientes"></tbody>
@@ -46,171 +47,7 @@
     </div>
 </div>
 
-<!-- Pop-up (dialog) crear paciente -->
-<dialog id="dialogCrearPaciente" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-success text-center mb-0">Crear paciente</h4>
-
-    <form id="formCrearPaciente">
-        <div class="mb-3">
-            <label for="nombreCrear" class="form-label">Nombre</label>
-            <input id="nombreCrear" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="apellidosCrear" class="form-label">Apellidos</label>
-            <input id="apellidosCrear" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="usernameCrear" class="form-label">Username</label>
-            <input id="usernameCrear" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="emailCrear" class="form-label">Email</label>
-            <input id="emailCrear" class="form-control form-control-dark" type="email" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="dniCrear" class="form-label">DNI</label>
-            <input id="dniCrear" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="passwordCrear" class="form-label">Contraseña</label>
-            <input id="passwordCrear" class="form-control form-control-dark" type="password" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="activoCrear" class="form-label">Estado</label>
-            <select id="activoCrear" class="form-control form-control-dark" required>
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
-        </div>
-
-        <div id="msgCrearError" class="alert alert-danger d-none" role="alert"></div>
-
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <button type="button" class="btn btn-outline-gradient-primary"
-                    onclick="document.getElementById('dialogCrearPaciente').close()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary px-4 fs-5">Crear</button>
-        </div>
-    </form>
-</dialog>
-
-
-<!-- Pop-up (dialog) editar paciente -->
-<dialog id="dialogEditarPaciente" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-primary text-center">Editar paciente</h4>
-    <form id="formEditarPaciente">
-        <input type="hidden" id="idPacienteEditado">
-
-        <div class="mb-3">
-            <label for="nombreEditar" class="form-label">Nombre</label>
-            <input class="form-control form-control-dark" id="nombreEditar" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="apellidosEditar" class="form-label">Apellidos</label>
-            <input class="form-control form-control-dark" id="apellidosEditar" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="usernameEditar" class="form-label">Username</label>
-            <input class="form-control form-control-dark" id="usernameEditar" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="emailEditar" class="form-label">Email</label>
-            <input class="form-control form-control-dark" id="emailEditar" type="email" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="dniEditar" class="form-label">DNI</label>
-            <input class="form-control form-control-dark" id="dniEditar" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="activoEditar" class="form-label">Estado</label>
-            <select class="form-control form-control-dark" id="activoEditar" required>
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
-        </div>
-
-        <div class="d-grid mb-3">
-            <button type="button" class="btn btn-outline-gradient-primary" id="btnCambiarPassword">Cambiar contraseña</button>
-        </div>
-
-        <div id="editError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
-
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dialogEditarPaciente').close()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary" id="btnGuardarEdicion">Guardar</button>
-        </div>
-    </form>
-
-</dialog>
-
-<!-- Pop-up (dialog) cambiar contraseña -->
-<dialog id="dialogCambiarPassword" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h5 class="text-gradient-primary text-center">Cambiar contraseña</h5>
-    <form id="formCambiarPassword">
-        <input type="hidden" id="pacientePassEditadaId">
-
-        <div class="mb-3">
-            <label for="passActual" class="form-label">Contraseña actual</label>
-            <input class="form-control form-control-dark" id="passActual" type="password" placeholder="Escribe aquí tu contraseña actual" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="passNueva" class="form-label">Nueva contraseña</label>
-            <input class="form-control form-control-dark" id="passNueva" type="password" autocomplete="Escribe tu nueva contraseña" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="passNuevaConfirm" class="form-label">Confirmar nueva contraseña</label>
-            <input class="form-control form-control-dark" id="passNuevaConfirm" type="password" autocomplete="Vuelve a escribir tu nueva contraseña" required>
-        </div>
-
-        <div id="msgPassError" class="alert alert-danger d-none mb-0" role="alert"></div>
-
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('dialogCambiarPassword').close(); document.getElementById('dialogEditarPaciente').showModal()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary" id="btnGuardarPassword">Guardar</button>
-        </div>
-    </form>
-</dialog>
-
-<!-- Pop-up (dialog) asignar roles -->
-<dialog id="dialogAsignarRoles" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-success text-center mb-4">Asignar roles</h4>
-
-    <p class="mb-3"><strong>Paciente:</strong> <span id="nombrePacienteAsignarRoles"></span></p>
-
-    <form id="formAsignarRoles">
-        <input type="hidden" id="idPacienteAsignarRoles">
-
-        <div class="">
-            <label class="form-label">Selecciona uno o varios roles:</label>
-            <div id="checkboxRoles" class="d-flex flex-column gap-2">
-                <!-- Checkbox dínámico que obtiene los roles existentes con js -->
-            </div>
-        </div>
-
-        <div id="msgRolesError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
-
-        <div class="d-flex justify-content-center gap-2 mt-4">
-            <button type="button" class="btn btn-outline-gradient-primary"
-                    onclick="document.getElementById('dialogAsignarRoles').close()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary px-4">Guardar roles</button>
-        </div>
-    </form>
-</dialog>
-
-
-<script src="/js/gestionUsuarios.js"></script>
+<script src="/js/listaPacientes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js"></script>
 

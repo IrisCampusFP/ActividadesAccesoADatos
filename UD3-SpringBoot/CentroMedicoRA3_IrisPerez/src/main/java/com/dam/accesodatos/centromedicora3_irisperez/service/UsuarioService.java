@@ -131,12 +131,23 @@ public class UsuarioService {
         return toDTOList(usuarioRepository.findAll());
     }
 
-    // Obtener usuario por id
+    // Obtener DTO usuario por id
     @Transactional(readOnly = true)
-    public UsuarioDTO obtenerUsuarioPorId(Long id) {
+    public UsuarioDTO obtenerUsuarioDTOPorId(Long id) {
         Optional<Usuario> usuario = usuarioRepository.findById(id);
         if (usuario.isPresent()) {
             return toDTO(usuario.get());
+        } else {
+            throw new IllegalArgumentException("No se ha encontrado ningún usuario con id: " + id);
+        }
+    }
+
+    // Obtener usuario por id
+    @Transactional(readOnly = true)
+    public Usuario obtenerUsuarioPorId(Long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            return usuario.get();
         } else {
             throw new IllegalArgumentException("No se ha encontrado ningún usuario con id: " + id);
         }
@@ -154,6 +165,12 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<UsuarioDTO> obtenerUsuariosActivos() {
         return toDTOList(usuarioRepository.findByActivoTrue());
+    }
+
+    // Obtener todos los médicos (usuarios con rol MEDICO)
+    @Transactional(readOnly = true)
+    public List<UsuarioDTO> obtenerUsuariosMedico() {
+        return toDTOList(usuarioRepository.obtenerUsuariosMedico());
     }
 
     // UPDATE
