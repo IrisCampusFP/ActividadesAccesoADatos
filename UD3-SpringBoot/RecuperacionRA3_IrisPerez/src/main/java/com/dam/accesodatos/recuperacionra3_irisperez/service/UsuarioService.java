@@ -198,8 +198,8 @@ public class UsuarioService {
         } else {
             Usuario usuario = usuarioAActualizar.get();
 
-            comprobarUsernameUnicoEditar(usuario.getUsername(), usuarioActualizado.getUsername());
-            comprobarEmailUnicoEditar(usuario.getEmail(), usuarioActualizado.getEmail());
+            comprobarUsernameUnicoEditar(usuarioActualizado.getUsername(), usuario.getUsername());
+            comprobarEmailUnicoEditar(usuarioActualizado.getEmail(), usuario.getEmail());
 
             // Actualizo los campos (sobrescribo los originales con los nuevos)
             usuario.setUsername(usuarioActualizado.getUsername());
@@ -304,12 +304,12 @@ public class UsuarioService {
         if(usuarioRepository.existsByEmail(email)) throw new IllegalArgumentException("Ya existe un usuario con ese email.");
     }
 
-    public void comprobarUsernameUnicoEditar(String username, String usernameUsuarioEditado) {
-        if(usuarioRepository.existsByUsername(username) && !(username.equalsIgnoreCase(usernameUsuarioEditado))) throw new IllegalArgumentException("Ya existe un usuario con ese username.");
+    public void comprobarUsernameUnicoEditar(String usernameNuevo, String usernameAnterior) {
+        if(usuarioRepository.existsByUsername(usernameNuevo) && !(usernameNuevo.equalsIgnoreCase(usernameAnterior))) throw new IllegalArgumentException("Ya existe un usuario con ese username.");
     }
 
-    public void comprobarEmailUnicoEditar(String email, String emailUsuarioEditado) {
-        if(usuarioRepository.existsByEmail(email) && !(email.equalsIgnoreCase(emailUsuarioEditado))) throw new IllegalArgumentException("Ya existe un usuario con ese email.");
+    public void comprobarEmailUnicoEditar(String emailNuevo, String emailAnterior) {
+        if(usuarioRepository.existsByEmail(emailNuevo) && !(emailNuevo.equalsIgnoreCase(emailAnterior))) throw new IllegalArgumentException("Ya existe un usuario con ese email.");
     }
 
 }
