@@ -1,7 +1,6 @@
 package com.dam.accesodatos.recuperacionra3_irisperez.controller;
 
-import com.dam.accesodatos.recuperacionra3_irisperez.DTO.UsuarioDTO;
-import com.dam.accesodatos.recuperacionra3_irisperez.DTO.UsuarioUpdateDTO;
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.*;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Camion;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Rol;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Ruta;
@@ -162,7 +161,7 @@ public class AdminController {
     public ResponseEntity<?> crearCamion(@RequestBody Camion camion, HttpSession session) {
         usuarioService.comprobarAdmin(session);
         try {
-            Camion nuevoCamion = camionService.crearCamion(camion);
+            CamionDTO nuevoCamion = camionService.crearCamion(camion);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoCamion);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
@@ -173,18 +172,18 @@ public class AdminController {
     @GetMapping("/camiones")
     public ResponseEntity<?> obtenerCamiones(HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        List<Camion> camiones = camionService.obtenerCamiones();
+        List<CamionDTO> camiones = camionService.obtenerCamiones();
         return ResponseEntity.ok(camiones);
     }
 
     // Actualizar camion
     @PutMapping("/camiones/{id}")
-    public ResponseEntity<?> actualizarCamion(@PathVariable Long id, @RequestBody Camion camionActualizado, HttpSession session) {
+    public ResponseEntity<?> actualizarCamion(@PathVariable Long id, @RequestBody CamionUpdateDTO camionActualizado, HttpSession session) {
         usuarioService.comprobarAdmin(session);
 
         // Se actualiza el camion en la base de datos
         try {
-            Camion camion = camionService.actualizarCamion(id, camionActualizado);
+            CamionDTO camion = camionService.actualizarCamion(id, camionActualizado);
             return ResponseEntity.ok(camion);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
@@ -195,7 +194,7 @@ public class AdminController {
     @GetMapping("/camiones/{id}")
     public ResponseEntity<?> obtenerCamionPorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        Camion camion = camionService.obtenerCamionPorId(id);
+        CamionDTO camion = camionService.obtenerCamionPorId(id);
         return ResponseEntity.ok(camion);
     }
 
@@ -215,7 +214,6 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    
     // ···················
     //      RUTAS
     // ···················
@@ -236,18 +234,18 @@ public class AdminController {
     @GetMapping("/rutas")
     public ResponseEntity<?> obtenerRutas(HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        List<Ruta> rutas = rutaService.obtenerRutas();
+        List<RutaDTO> rutas = rutaService.obtenerRutas();
         return ResponseEntity.ok(rutas);
     }
 
     // Actualizar ruta
     @PutMapping("/rutas/{id}")
-    public ResponseEntity<?> actualizarRuta(@PathVariable Long id, @RequestBody Ruta rutaActualizado, HttpSession session) {
+    public ResponseEntity<?> actualizarRuta(@PathVariable Long id, @RequestBody RutaUpdateDTO rutaActualizado, HttpSession session) {
         usuarioService.comprobarAdmin(session);
 
         // Se actualiza el ruta en la base de datos
         try {
-            Ruta ruta = rutaService.actualizarRuta(id, rutaActualizado);
+            RutaDTO ruta = rutaService.actualizarRuta(id, rutaActualizado);
             return ResponseEntity.ok(ruta);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
@@ -258,11 +256,11 @@ public class AdminController {
     @GetMapping("/rutas/{id}")
     public ResponseEntity<?> obtenerRutaPorId(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
-        Ruta ruta = rutaService.obtenerRutaPorId(id);
+        RutaDTO ruta = rutaService.obtenerRutaPorId(id);
         return ResponseEntity.ok(ruta);
     }
 
-    // Cambiar estado de laruta (activo/inactivo)
+    // Cambiar estado del ruta (activo/inactivo)
     @PutMapping("/rutas/{id}/estado")
     public ResponseEntity<?> cambiarEstadoRuta(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
@@ -276,6 +274,6 @@ public class AdminController {
         usuarioService.comprobarAdmin(session);
         rutaService.eliminarRuta(id);
         return ResponseEntity.noContent().build();
-
     }
+    
 }

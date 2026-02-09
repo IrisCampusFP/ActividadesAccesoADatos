@@ -1,6 +1,11 @@
 package com.dam.accesodatos.recuperacionra3_irisperez.service;
 
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.CamionDTO;
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.CamionUpdateDTO;
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.UsuarioDTO;
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.UsuarioUpdateDTO;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Camion;
+import com.dam.accesodatos.recuperacionra3_irisperez.entity.Usuario;
 import com.dam.accesodatos.recuperacionra3_irisperez.repository.RolRepository;
 import com.dam.accesodatos.recuperacionra3_irisperez.repository.CamionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +39,24 @@ public class CamionService {
     private RolRepository rolRepository;
 
     @Transactional(readOnly = true)
-    public List<Camion> toDTOList(List<Camion> camiones) {
-        return camiones;
+    public CamionDTO toDTO(Camion camion) {
+        return new CamionDTO(
+                camion.getId(),
+                camion.getMatricula(),
+                camion.getModelo(),
+                camion.getCapacidad_kg(),
+                camion.getEstado(),
+                camion.getFecha_alta(),
+                camion.getActivo(),
+                camion.getAsignaciones()
+        );
     }
+
+    @Transactional(readOnly = true)
+    public List<CamionDTO> toDTOList(List<Camion> camiones) {
+        return camiones.stream().map(this::toDTO).toList();
+    }
+
 
     // CREATE
 
@@ -46,28 +66,28 @@ public class CamionService {
      * - Ya existe un camion con ese email
      */
     @Transactional
-    public Camion crearCamion(Camion camion) {
+    public CamionDTO crearCamion(Camion camion) {
 
         if (camion == null) throw new IllegalArgumentException("Camion nulo");
 
 
-        return camionRepository.save(camion);
+        return toDTO(camionRepository.save(camion));
     }
 
     // READ
 
     // Obtener todos los camiones
     @Transactional(readOnly = true)
-    public List<Camion> obtenerCamiones() {
-        return camionRepository.findAll();
+    public List<CamionDTO> obtenerCamiones() {
+        return toDTOList(camionRepository.findAll());
     }
 
     // Obtener DTO camion por id
     @Transactional(readOnly = true)
-    public Camion obtenerCamionDTOPorId(Long id) {
+    public CamionDTO obtenerCamionDTOPorId(Long id) {
         Optional<Camion> camion = camionRepository.findById(id);
         if (camion.isPresent()) {
-            return camion.get();
+            return toDTO(camion.get());
         } else {
             throw new IllegalArgumentException("No se ha encontrado ningún camion con id: " + id);
         }
@@ -75,10 +95,10 @@ public class CamionService {
 
     // Obtener camion por id
     @Transactional(readOnly = true)
-    public Camion obtenerCamionPorId(Long id) {
+    public CamionDTO obtenerCamionPorId(Long id) {
         Optional<Camion> camion = camionRepository.findById(id);
         if (camion.isPresent()) {
-            return camion.get();
+            return toDTO(camion.get());
         } else {
             throw new IllegalArgumentException("No se ha encontrado ningún camion con id: " + id);
         }
@@ -86,8 +106,8 @@ public class CamionService {
 
     // Obtener todos los camiones activos
     @Transactional(readOnly = true)
-    public List<Camion> obtenerCamionesActivos() {
-        return camionRepository.findByActivoTrue();
+    public List<CamionDTO> obtenerCamionesActivos() {
+        return toDTOList(camionRepository.findByActivoTrue());
     }
 
 
@@ -98,15 +118,26 @@ public class CamionService {
      * - El camion a actualizar no existe en la base de datos
      */
     @Transactional
-    public Camion actualizarCamion(Long id, Camion camion) {
-        if(camion == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
+    public CamionDTO actualizarCamion(Long id, CamionUpdateDTO camionActualizado) {
+        if(camionActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
 
         Optional<Camion> camionAActualizar = camionRepository.findById(id);
 
         if (camionAActualizar.isEmpty()) {
             throw new IllegalStateException("El camion no existe en la base de datos.");
         } else {
-            return camionRepository.save(camion);
+            Camion camion = camionAActualizar.get();
+
+            // Actualizo los campos (sobrescribo los originales con los nuevos)
+            camion.setMatricula(camionActualizado.getMatricula());
+            camion.setModelo(camionActualizado.getModelo());
+            camion.setCapacidad_kg(camionActualizado.getCapacidad_kg());
+            camion.setEstado(camionActualizado.getEstado());
+            camion.setFecha_alta(camionActualizado.getFechaAlta());
+            camion.setActivo(camionActualizado.getActivo());
+
+            // Guardo el camion en la base de datos y retorno los datos del camion actualizado
+            return toDTO(camionRepository.save(camion));
         }
     }
 

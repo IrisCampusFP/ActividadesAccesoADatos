@@ -16,7 +16,7 @@
             <h2 class="mb-0 text-gradient-primary">Panel de asignaciones (Coordinador)</h2>
         </div>
         <div class="d-flex gap-3">
-            <button id="btnCrearRuta" class="btn btn-gradient-success">✛ Crear nuevo ruta</button>
+            <button id="btnCrearAsignacion" class="btn btn-gradient-success">✛ Crear nuevo asignación</button>
             <a href="/vista" class="btn btn-outline-gradient-primary px-4">Volver</a>
         </div>
     </div>
@@ -30,30 +30,27 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>DNI</th>
-                        <th>Teléfono</th>
-                        <th>Fecha Nacimiento</th>
-                        <th>Historial</th>
-                        <th>Médico</th>
-                        <th>Estado</th>
-                        <th>Fecha Creación</th>
+                        <th>Camion (Matrícula)</th>
+                        <th>Modelo</th>
+                        <th>Ruta</th>
+                        <th>Zona</th>
+                        <th>Día</th>
+                        <th>Fecha Asignación</th>
                         <th class="text-center">Acciones</th>
                     </tr>
                     </thead>
-                    <tbody id="tBodyRutas"></tbody>
+                    <tbody id="tBodyAsignaciones"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Pop-up (dialog) crear ruta -->
-<dialog id="dialogCrearRuta" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-success text-center mb-0">Crear ruta</h4>
+<!-- Pop-up (dialog) crear asignacion -->
+<dialog id="dialogCrearAsignacion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+    <h4 class="text-gradient-success text-center mb-0">Crear asignacion</h4>
 
-    <form id="formCrearRuta">
+    <form id="formCrearAsignacion">
         <div class="mb-3">
             <label for="nombreCrear" class="form-label">Nombre</label>
             <input id="nombreCrear" class="form-control form-control-dark" type="text" required>
@@ -96,79 +93,20 @@
 
         <div class="d-flex justify-content-center gap-2 mt-3">
             <button type="button" class="btn btn-outline-gradient-primary"
-                    onclick="document.getElementById('dialogCrearRuta').close()">Cancelar</button>
+                    onclick="document.getElementById('dialogCrearAsignacion').close()">Cancelar</button>
             <button type="submit" class="btn btn-gradient-primary px-4 fs-5">Crear</button>
         </div>
     </form>
-</dialog>
-
-
-<!-- Pop-up (dialog) editar ruta -->
-<dialog id="dialogEditarRuta" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-primary text-center">Editar ruta</h4>
-    <form id="formEditarRuta">
-        <input type="hidden" id="idRutaEditado">
-
-        <div class="mb-3">
-            <label for="nombreEditar" class="form-label">Nombre</label>
-            <input id="nombreEditar" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="apellidosEditar" class="form-label">Apellidos</label>
-            <input id="apellidosEditar" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="dniEditar" class="form-label">DNI</label>
-            <input id="dniEditar" class="form-control form-control-dark" type="text" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="telefonoEditar" class="form-label">Teléfono</label>
-            <input id="telefonoEditar" class="form-control form-control-dark" type="tel">
-        </div>
-
-        <div class="mb-3">
-            <label for="fechaNacimientoEditar" class="form-label">Fecha de nacimiento</label>
-            <input id="fechaNacimientoEditar" class="form-control form-control-dark" type="date">
-        </div>
-
-        <div class="mb-3">
-            <label for="historialEditar" class="form-label">Historial</label>
-            <textarea id="historialEditar" class="form-control form-control-dark"></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label for="activoEditar" class="form-label">Estado</label>
-            <select id="activoEditar" class="form-control form-control-dark">
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
-        </div>
-
-        <div class="d-grid mb-3">
-            <button type="button" class="btn btn-outline-gradient-primary" id="btnCambiarMedico">Cambiar Médico</button>
-        </div>
-
-        <div id="editError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
-
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dialogEditarRuta').close()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary" id="btnGuardarEdicion">Guardar</button>
-        </div>
-    </form>
-
 </dialog>
 
 <!-- Pop-up (dialog) asignar médico -->
 <dialog id="dialogAsignarMedico" class="rounded-4 p-4 bg-dark text-light shadow-lg">
     <h4 class="text-gradient-success text-center mb-4">Asignar médico</h4>
 
-    <p class="mb-3"><strong>Ruta:</strong> <span id="nombreRutaAsignarMedico"></span></p>
+    <p class="mb-3"><strong>Asignacion:</strong> <span id="nombreAsignacionAsignarMedico"></span></p>
 
     <form id="formAsignarMedico">
-        <input type="hidden" id="idRutaAsignarMedico">
+        <input type="hidden" id="idAsignacionAsignarMedico">
 
         <div class="">
             <label class="form-label">Seleccionar médico:</label>

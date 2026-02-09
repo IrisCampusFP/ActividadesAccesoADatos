@@ -1,5 +1,6 @@
 package com.dam.accesodatos.recuperacionra3_irisperez.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

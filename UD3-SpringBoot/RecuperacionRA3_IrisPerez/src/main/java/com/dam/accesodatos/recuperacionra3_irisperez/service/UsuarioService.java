@@ -256,7 +256,7 @@ public class UsuarioService {
 
     // CONTROL DE PERMISOS
 
-    // Comprueba que el usuario sea administrador
+    // Comprueba que el usuario esté registrado y sea ADMIN
     public void comprobarAdmin(HttpSession session) {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
@@ -269,7 +269,8 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 
-    public void comprobarMedico(HttpSession session) {
+    // Comprueba que el usuario esté registrado y sea COORDINADOR
+    public void comprobarCoordinador(HttpSession session) {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
 
@@ -277,19 +278,7 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
         }
 
-        if (usuario.getRoles().stream().noneMatch(r -> r.getNombre().equalsIgnoreCase("MEDICO")))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
-    }
-
-    public void comprobarRecepcion(HttpSession session) {
-
-        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
-
-        if (usuario == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
-        }
-
-        if (usuario.getRoles().stream().noneMatch(r -> r.getNombre().equalsIgnoreCase("RECEPCION")))
+        if (usuario.getRoles().stream().noneMatch(r -> r.getNombre().equalsIgnoreCase("COORDINADOR")))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
     }
 

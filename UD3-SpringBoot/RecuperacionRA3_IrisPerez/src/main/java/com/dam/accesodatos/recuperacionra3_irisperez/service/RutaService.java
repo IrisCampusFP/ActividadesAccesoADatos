@@ -1,6 +1,9 @@
 package com.dam.accesodatos.recuperacionra3_irisperez.service;
 
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.*;
+import com.dam.accesodatos.recuperacionra3_irisperez.entity.Camion;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Ruta;
+import com.dam.accesodatos.recuperacionra3_irisperez.entity.Usuario;
 import com.dam.accesodatos.recuperacionra3_irisperez.repository.RolRepository;
 import com.dam.accesodatos.recuperacionra3_irisperez.repository.RutaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +37,25 @@ public class RutaService {
     private RolRepository rolRepository;
 
     @Transactional(readOnly = true)
-    public List<Ruta> toDTOList(List<Ruta> rutaes) {
-        return rutaes;
+    public RutaDTO toDTO(Ruta ruta) {
+        return new RutaDTO(
+                ruta.getId(),
+                ruta.getNombre(),
+                ruta.getZona(),
+                ruta.getDia_semana(),
+                ruta.getHora_inicio(),
+                ruta.getHora_fin(),
+                ruta.getActiva(),
+                ruta.getAsignaciones()
+        );
     }
+
+    @Transactional(readOnly = true)
+    public List<RutaDTO> toDTOList(List<Ruta> rutas) {
+        return rutas.stream().map(this::toDTO).toList();
+    }
+
+
 
     // CREATE
 
@@ -57,16 +76,16 @@ public class RutaService {
 
     // Obtener todos los rutaes
     @Transactional(readOnly = true)
-    public List<Ruta> obtenerRutas() {
-        return rutaRepository.findAll();
+    public List<RutaDTO> obtenerRutas() {
+        return toDTOList(rutaRepository.findAll());
     }
 
     // Obtener DTO ruta por id
     @Transactional(readOnly = true)
-    public Ruta obtenerRutaDTOPorId(Long id) {
+    public RutaDTO obtenerRutaDTOPorId(Long id) {
         Optional<Ruta> ruta = rutaRepository.findById(id);
         if (ruta.isPresent()) {
-            return ruta.get();
+            return toDTO(ruta.get());
         } else {
             throw new IllegalArgumentException("No se ha encontrado ningún ruta con id: " + id);
         }
@@ -74,10 +93,10 @@ public class RutaService {
 
     // Obtener ruta por id
     @Transactional(readOnly = true)
-    public Ruta obtenerRutaPorId(Long id) {
+    public RutaDTO obtenerRutaPorId(Long id) {
         Optional<Ruta> ruta = rutaRepository.findById(id);
         if (ruta.isPresent()) {
-            return ruta.get();
+            return toDTO(ruta.get());
         } else {
             throw new IllegalArgumentException("No se ha encontrado ningún ruta con id: " + id);
         }
@@ -85,29 +104,36 @@ public class RutaService {
 
     // Obtener todas los rutas activas
     @Transactional(readOnly = true)
-    public List<Ruta> obtenerRutasActivas() {
-        return rutaRepository.findByActivaTrue();
+    public List<RutaDTO> obtenerRutasActivas() {
+        return toDTOList(rutaRepository.findByActivaTrue());
     }
 
     // UPDATE
 
-    /* Actualizar ruta. No se actualiza si:
-     * - El ruta con los nuevos datos viene vacío
-     * - El ruta a actualizar no existe en la base de datos
-     */
+    // Actualizar ruta
     @Transactional
-    public Ruta actualizarRuta(Long id, Ruta ruta) {
-        if(ruta == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
+    public RutaDTO actualizarRuta(Long id, RutaUpdateDTO rutaActualizado) {
+        if(rutaActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
 
         Optional<Ruta> rutaAActualizar = rutaRepository.findById(id);
 
         if (rutaAActualizar.isEmpty()) {
             throw new IllegalStateException("El ruta no existe en la base de datos.");
         } else {
-            return rutaRepository.save(ruta);
+            Ruta ruta = rutaAActualizar.get();
+
+            // Actualizo los campos (sobrescribo los originales con los nuevos)
+            ruta.setNombre(rutaActualizado.getNombre());
+            ruta.setZona(rutaActualizado.getZona());
+            ruta.setDia_semana(rutaActualizado.getDia_semana());
+            ruta.setHora_inicio(rutaActualizado.getHora_inicio());
+            ruta.setHora_fin(rutaActualizado.getHora_fin());
+            ruta.setActiva(rutaActualizado.getActiva());
+
+            // Guardo el ruta en la base de datos y retorno los datos del ruta actualizado
+            return toDTO(rutaRepository.save(ruta));
         }
     }
-
 
     // DELETE lógico (Desactivar)
 
