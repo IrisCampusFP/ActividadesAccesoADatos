@@ -1,41 +1,41 @@
-const tbodyPacientes = document.getElementById("tBodyPacientes");
+const tbodyCamiones = document.getElementById("tBodyCamiones");
 const recuadroAlert = document.getElementById("recuadroAlert");
 
-const dialogCrearPaciente = document.getElementById("dialogCrearPaciente");
-const dialogEditarPaciente = document.getElementById("dialogEditarPaciente");
+const dialogCrearCamion = document.getElementById("dialogCrearCamion");
+const dialogEditarCamion = document.getElementById("dialogEditarCamion");
 const dialogAsignarMedico = document.getElementById("dialogAsignarMedico");
 
 // Mostrar nombre del usuario (admin) que esté usando el panel en el title
 fetch("/user/datos")
     .then(r => r.json())
     .then(data => {
-        document.title = "Gestión de pacientes (" + data.nombre + ")";
+        document.title = "Camiones Registrados (" + data.nombre + ")";
     });
 
-cargarPacientes();
+cargarCamiones();
 
 // CARGAR LOS DATOS DE LOS PACIENTES EN EL BODY DE LA TABLA
-function cargarPacientes() {
+function cargarCamiones() {
     // Texto que aparece mientras cargan
-    tbodyPacientes.innerHTML =
-        '<tr><td colspan="100%" class="text-center">Cargando pacientes...</td></tr>';
+    tbodyCamiones.innerHTML =
+        '<tr><td colspan="100%" class="text-center">Cargando camiones...</td></tr>';
 
-    // Fetch que obtiene los datos de los pacientes y los muestra
-    fetch("/admin/pacientes")
+    // Fetch que obtiene los datos de los camiones y los muestra
+    fetch("/admin/camiones")
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido cargar la lista de pacientes.`; });
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido cargar la lista de camiones.`; });
             return r.json();
         })
-        .then(pacientes => {
-            if (pacientes.length === 0) {
-                tbodyPacientes.innerHTML =
-                    '<tr><td colspan="100%" class="text-center">No hay pacientes registrados</td></tr>';
+        .then(camiones => {
+            if (camiones.length === 0) {
+                tbodyCamiones.innerHTML =
+                    '<tr><td colspan="100%" class="text-center">No hay camiones registrados</td></tr>';
                 return;
             }
 
-            // Se muestran los datos de cada paciente fila por fila (tr) en el tBody
+            // Se muestran los datos de cada camion fila por fila (tr) en el tBody
             let tBody = "";
-            pacientes.forEach(p => {
+            camiones.forEach(p => {
                 tBody += `
                     <tr>
                         <td>${p.id}</td>
@@ -57,13 +57,13 @@ function cargarPacientes() {
                                 <button class="btn btn-sm btn-outline-warning col-3" 
                                     onclick="cambiarEstado(${p.id})">${p.activo ? "Desactivar" : "Activar"} </button> 
                                 <button class="btn btn-sm btn-outline-danger col-3" 
-                                    onclick="eliminarPaciente(${p.id})">Eliminar</button> 
+                                    onclick="eliminarCamion(${p.id})">Eliminar</button> 
                             </div> 
                         </td>
                     </tr>
                 `;
             });
-            tbodyPacientes.innerHTML = tBody;
+            tbodyCamiones.innerHTML = tBody;
         })
         .catch((error) =>
             mostrarError(error)
@@ -96,15 +96,15 @@ function validarDNI(dni) {
 
 
 // CREAR NUEVO PACIENTE
-// Al pulsar el botón 'Crear nuevo paciente' se abre el modal (dialog) con el formulario
-document.getElementById("btnCrearPaciente").onclick = () => {
-    dialogCrearPaciente.showModal();
+// Al pulsar el botón 'Crear nuevo camion' se abre el modal (dialog) con el formulario
+document.getElementById("btnCrearCamion").onclick = () => {
+    dialogCrearCamion.showModal();
 };
 
 const msgCrearError = document.getElementById("msgCrearError");
 
-// Al enviar el formulario se llama a la función crear paciente
-document.getElementById("formCrearPaciente").onsubmit = e => {
+// Al enviar el formulario se llama a la función crear camion
+document.getElementById("formCrearCamion").onsubmit = e => {
     e.preventDefault();
 
     // Validación del DNI
@@ -116,11 +116,11 @@ document.getElementById("formCrearPaciente").onsubmit = e => {
         return;
     }
 
-    crearPaciente();
+    crearCamion();
 };
-// Función que envía al backend los datos del nuevo paciente, se guardan y se recarga la tabla
-function crearPaciente() {
-    fetch("/admin/pacientes", {
+// Función que envía al backend los datos del nuevo camion, se guardan y se recarga la tabla
+function crearCamion() {
+    fetch("/admin/camiones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -134,13 +134,13 @@ function crearPaciente() {
         })
     })
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido crear el paciente.`; });
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido crear el camion.`; });
             return r.json();
         })
-        .then((pacienteCreado) => {
-            dialogCrearPaciente.close();
-            cargarPacientes();
-            cargarDialogAsignarMedico(pacienteCreado.id); // Se abre el dialog para asignar médico
+        .then((camionCreado) => {
+            dialogCrearCamion.close();
+            cargarCamiones();
+            cargarDialogAsignarMedico(camionCreado.id); // Se abre el dialog para asignar médico
         })
         .catch(e => {
             msgCrearError.textContent = e;
@@ -148,23 +148,23 @@ function crearPaciente() {
         });
 }
 
-dialogCrearPaciente.addEventListener("close", () => {
-    document.getElementById("formCrearPaciente").reset();
+dialogCrearCamion.addEventListener("close", () => {
+    document.getElementById("formCrearCamion").reset();
     msgCrearError.classList.add("d-none");
 });
 
 
 // EDITAR PACIENTE
 
-// Al pulsar el botón editar se llama a esta función que obtiene los datos del paciente por su id
+// Al pulsar el botón editar se llama a esta función que obtiene los datos del camion por su id
 function cargarDialogEditar(id) {
-    fetch("/admin/pacientes/" + id)
+    fetch("/admin/camiones/" + id)
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se han podido cargar los datos del paciente.`; });
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se han podido cargar los datos del camion.`; });
             return r.json();
         })
         .then(p => {
-            document.getElementById("idPacienteEditado").value = p.id;
+            document.getElementById("idCamionEditado").value = p.id;
             document.getElementById("nombreEditar").value = p.nombre;
             document.getElementById("apellidosEditar").value = p.apellidos;
             document.getElementById("dniEditar").value = p.dni;
@@ -172,15 +172,15 @@ function cargarDialogEditar(id) {
             document.getElementById("fechaNacimientoEditar").value = p.fechaNacimiento ?? "";
             document.getElementById("historialEditar").value = p.historial ?? "";
             document.getElementById("activoEditar").value = p.activo;
-            dialogEditarPaciente.showModal();
+            dialogEditarCamion.showModal();
         })
         .catch((error) =>
             alert(error)
         );
 }
 
-// Al enviar el formulario se llama a la función editar paciente
-document.getElementById("formEditarPaciente").onsubmit = e => {
+// Al enviar el formulario se llama a la función editar camion
+document.getElementById("formEditarCamion").onsubmit = e => {
     e.preventDefault();
 
     // Validación del DNI
@@ -191,13 +191,13 @@ document.getElementById("formEditarPaciente").onsubmit = e => {
         return;
     }
 
-    editarPaciente();
+    editarCamion();
 };
 
-function editarPaciente() {
-    const id = document.getElementById("idPacienteEditado").value;
+function editarCamion() {
+    const id = document.getElementById("idCamionEditado").value;
 
-    fetch("/admin/pacientes/" + id, {
+    fetch("/admin/camiones/" + id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -211,9 +211,9 @@ function editarPaciente() {
         })
     })
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status} No se ha podido editar el paciente.`; });
-            dialogEditarPaciente.close();
-            cargarPacientes();
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status} No se ha podido editar el camion.`; });
+            dialogEditarCamion.close();
+            cargarCamiones();
         })
         .catch((error) =>
             alert(error)
@@ -222,22 +222,22 @@ function editarPaciente() {
 
 // MODIFICAR ESTADO PACIENTE (Interruptor)
 // Se hace un fetch (metodo PUT) al metodo que acciona el interruptor
-// En el backend, el paciente cambia al estado contrario (activo -> inactivo, inactivo -> activo)
+// En el backend, el camion cambia al estado contrario (activo -> inactivo, inactivo -> activo)
 function cambiarEstado(id) {
-    fetch("/admin/pacientes/" + id + "/estado", { method: "PUT" })
-        .then(cargarPacientes)
+    fetch("/admin/camiones/" + id + "/estado", { method: "PUT" })
+        .then(cargarCamiones)
         .catch(() => mostrarError("Error al modificar estado"));
 }
 
 // ELIMINAR PACIENTE
-function eliminarPaciente(id) {
+function eliminarCamion(id) {
     // Se pide confirmación
-    if (!confirm(`¿Estás seguro/a de que quieres eliminar el paciente con id ${id}?`)) return;
+    if (!confirm(`¿Estás seguro/a de que quieres eliminar el camion con id ${id}?`)) return;
 
-    // Se hace un fetch con metodo DELETE para eliminar el paciente de la base de datos
-    fetch("/admin/pacientes/" + id, { method: "DELETE" })
-        .then(cargarPacientes) // Se recarga la tabla
-        .catch(() => mostrarError("Error al eliminar paciente."));
+    // Se hace un fetch con metodo DELETE para eliminar el camion de la base de datos
+    fetch("/admin/camiones/" + id, { method: "DELETE" })
+        .then(cargarCamiones) // Se recarga la tabla
+        .catch(() => mostrarError("Error al eliminar camion."));
 }
 
 
@@ -245,16 +245,16 @@ function eliminarPaciente(id) {
 
 // (Acceso 1: desde el form de editar)
 document.getElementById("btnCambiarMedico").onclick = () => {
-    const id = document.getElementById("idPacienteEditado").value;
-    dialogEditarPaciente.close();
+    const id = document.getElementById("idCamionEditado").value;
+    dialogEditarCamion.close();
     cargarDialogAsignarMedico(id);
 };
 
 // (Acceso 2: desde el botón del body)
 
-// Al pulsar el botón asignar médico se llama a esta función que obtiene los datos del paciente y los médicos disponibles
+// Al pulsar el botón asignar médico se llama a esta función que obtiene los datos del camion y los médicos disponibles
 function cargarDialogAsignarMedico(id) {
-    document.getElementById("idPacienteAsignarMedico").value = id;
+    document.getElementById("idCamionAsignarMedico").value = id;
     document.getElementById("msgDialogMedicoError").classList.add("d-none");
 
     // Cargar médicos disponibles
@@ -270,25 +270,25 @@ function cargarDialogAsignarMedico(id) {
             return r.json();
         })
         .then((medicosDisponibles) => {
-            // Cargar datos del paciente
-            return fetch("/admin/pacientes/" + id, {
+            // Cargar datos del camion
+            return fetch("/admin/camiones/" + id, {
                 method: "GET"
             })
                 .then((r) => {
                     if (!r.ok)
                         return r.json()
-                            .then(data => { throw data.errorMsg || `Error ${r.status}: No se han podido cargar los datos del paciente.`
+                            .then(data => { throw data.errorMsg || `Error ${r.status}: No se han podido cargar los datos del camion.`
                             });
                     return r.json();
                 })
-                .then((paciente) => {
-                    // Mostrar nombre del paciente en el dialog
-                    document.getElementById("nombrePacienteAsignarMedico").textContent = paciente.nombre + " " + paciente.apellidos;
+                .then((camion) => {
+                    // Mostrar nombre del camion en el dialog
+                    document.getElementById("nombreCamionAsignarMedico").textContent = camion.nombre + " " + camion.apellidos;
 
-                    // Obtener id del médico del paciente
-                    const medicoPaciente = paciente.medico ? paciente.medico.id : null;
+                    // Obtener id del médico del camion
+                    const medicoCamion = camion.medico ? camion.medico.id : null;
 
-                    // Se genera el input tipo radio dinámicamente, con el médico del paciente seleccionado por defecto
+                    // Se genera el input tipo radio dinámicamente, con el médico del camion seleccionado por defecto
                     const radioMedicosDiv = document.getElementById("radioMedicosDiv");
                     let htmlRadioMedicos = "";
 
@@ -296,7 +296,7 @@ function cargarDialogAsignarMedico(id) {
                         htmlRadioMedicos += `
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" value="${medico.id}" name="radioMedicos"
-                                       id="medico${medico.id}" ${medicoPaciente === medico.id ? 'checked' : ''} ${medico.activo ? '' : 'disabled'}>
+                                       id="medico${medico.id}" ${medicoCamion === medico.id ? 'checked' : ''} ${medico.activo ? '' : 'disabled'}>
                                 <label class="form-check-label" for="medico${medico.id}">${medico.nombre}</label>
                             </div>
                         `;
@@ -321,17 +321,17 @@ const msgDialogMedicoError = document.getElementById("msgDialogMedicoError");
 
 // Función que envía el médico seleccionado al backend
 function asignarMedico() {
-    const id = document.getElementById("idPacienteAsignarMedico").value;
+    const id = document.getElementById("idCamionAsignarMedico").value;
     const medicoSeleccionado = document.querySelector("input[name='radioMedicos']:checked");
 
     // Se comprueba que se haya seleccionado un médico
     if (!medicoSeleccionado) {
-        msgDialogMedicoError.textContent = "El paciente debe tener un médico asignado.";
+        msgDialogMedicoError.textContent = "El camion debe tener un médico asignado.";
         msgDialogMedicoError.classList.remove("d-none");
         return;
     }
 
-    fetch("/admin/pacientes/medico/" + id, {
+    fetch("/admin/camiones/medico/" + id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parseInt(medicoSeleccionado.value))
@@ -340,7 +340,7 @@ function asignarMedico() {
             .then(data => {throw data.errorMsg || `Error: ${r.status}. No se ha podido asignar el nuevo médico.`
             });
         dialogAsignarMedico.close(); // Se cierra el dialog
-        cargarPacientes(); // Se recargan los datos mostrados en la tabla
+        cargarCamiones(); // Se recargan los datos mostrados en la tabla
     }).catch((error) => {
         msgDialogMedicoError.textContent = error;
         msgDialogMedicoError.classList.remove("d-none");

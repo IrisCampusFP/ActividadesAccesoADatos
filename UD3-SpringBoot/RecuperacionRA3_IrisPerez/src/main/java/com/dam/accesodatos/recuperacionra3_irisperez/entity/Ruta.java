@@ -33,8 +33,9 @@ public class Ruta implements Serializable {
     @Column(name = "zona", nullable = false, length = 100)
     private String zona;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "dia_semana", nullable = false)
-    private String dia_semana;
+    private DiaSemana dia_semana;
 
     @Column(name = "hora_inicio", nullable = false)
     private LocalTime hora_inicio;
@@ -45,18 +46,17 @@ public class Ruta implements Serializable {
     @Column(name = "activa", nullable = false)
     private Boolean activa;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "asignaciones",
-            joinColumns = @JoinColumn(name = "ruta_id"),
-            inverseJoinColumns = @JoinColumn(name = "camion_id")
-    )
-    private Set<Camion> camiones = new HashSet<>();
+    // Reemplazar el @ManyToMany por:
+    @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Asignacion> asignaciones = new HashSet<>();
 
-    //    @OneToMany(mappedBy = "ruta", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Asignacion> asignaciones = new ArrayList<>();
-
-
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "asignaciones",
+//            joinColumns = @JoinColumn(name = "ruta_id"),
+//            inverseJoinColumns = @JoinColumn(name = "camion_id")
+//    )
+//    private Set<Camion> camiones = new HashSet<>();
 
     /*
      * Callback JPA que se ejecuta antes de insertar la entidad.

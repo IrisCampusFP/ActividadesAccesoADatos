@@ -39,8 +39,9 @@ public class Camion implements Serializable {
     @Column(name = "capacidad_kg", nullable = false)
     private BigDecimal capacidad_kg;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private String estado;
+    private EstadoCamion estado;
 
     @Column(name = "fecha_alta", nullable = false)
     private LocalDate fecha_alta;
@@ -48,23 +49,16 @@ public class Camion implements Serializable {
     @Column(name = "activo", nullable = false)
     private Boolean activo;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "asignaciones",
-            joinColumns = @JoinColumn(name = "camion_id"),
-            inverseJoinColumns = @JoinColumn(name = "ruta_id")
-    )
-    private Set<Ruta> rutas = new HashSet<>();
+    @OneToMany(mappedBy = "camion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Asignacion> asignaciones = new HashSet<>();
 
-
-//    @OneToMany(mappedBy = "camion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Asignacion> asignaciones = new ArrayList<>();
-
-
-    /*
-    @OneToMany(mappedBy = "medico", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Paciente> pacientes = new ArrayList<>();
-    */
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "asignaciones",
+//            joinColumns = @JoinColumn(name = "camion_id"),
+//            inverseJoinColumns = @JoinColumn(name = "ruta_id")
+//    )
+//    private Set<Ruta> rutas = new HashSet<>();
 
     /*
      * Callback JPA que se ejecuta antes de insertar la entidad.
@@ -76,7 +70,7 @@ public class Camion implements Serializable {
             activo = true;
         }
         if (estado == null) {
-            estado = "DISPONIBLE";
+            estado = EstadoCamion.DISPONIBLE;
         }
         if (fecha_alta == null) {
             fecha_alta = LocalDate.now();

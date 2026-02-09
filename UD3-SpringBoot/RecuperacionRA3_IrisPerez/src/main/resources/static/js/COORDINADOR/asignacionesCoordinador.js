@@ -1,41 +1,41 @@
-const tbodyPacientes = document.getElementById("tBodyPacientes");
+const tbodyAsignaciones = document.getElementById("tBodyAsignaciones");
 const recuadroAlert = document.getElementById("recuadroAlert");
 
-const dialogCrearPaciente = document.getElementById("dialogCrearPaciente");
-const dialogEditarPaciente = document.getElementById("dialogEditarPaciente");
+const dialogCrearAsignacion = document.getElementById("dialogCrearAsignacion");
+const dialogEditarAsignacion = document.getElementById("dialogEditarAsignacion");
 const dialogAsignarMedico = document.getElementById("dialogAsignarMedico");
 
 // Mostrar nombre del usuario (admin) que esté usando el panel en el title
 fetch("/user/datos")
     .then(r => r.json())
     .then(data => {
-        document.title = "Gestión de pacientes (" + data.nombre + ")";
+        document.title = "Gestión de asignaciones (" + data.nombre + ")";
     });
 
-cargarPacientes();
+cargarAsignaciones();
 
 // CARGAR LOS DATOS DE LOS PACIENTES EN EL BODY DE LA TABLA
-function cargarPacientes() {
+function cargarAsignaciones() {
     // Texto que aparece mientras cargan
-    tbodyPacientes.innerHTML =
-        '<tr><td colspan="100%" class="text-center">Cargando pacientes...</td></tr>';
+    tbodyAsignaciones.innerHTML =
+        '<tr><td colspan="100%" class="text-center">Cargando asignaciones...</td></tr>';
 
-    // Fetch que obtiene los datos de los pacientes y los muestra
-    fetch("/admin/pacientes")
+    // Fetch que obtiene los datos de los asignaciones y los muestra
+    fetch("/admin/asignaciones")
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido cargar la lista de pacientes.`; });
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido cargar la lista de asignaciones.`; });
             return r.json();
         })
-        .then(pacientes => {
-            if (pacientes.length === 0) {
-                tbodyPacientes.innerHTML =
-                    '<tr><td colspan="100%" class="text-center">No hay pacientes registrados</td></tr>';
+        .then(asignaciones => {
+            if (asignaciones.length === 0) {
+                tbodyAsignaciones.innerHTML =
+                    '<tr><td colspan="100%" class="text-center">No hay asignaciones registrados</td></tr>';
                 return;
             }
 
-            // Se muestran los datos de cada paciente fila por fila (tr) en el tBody
+            // Se muestran los datos de cada asignacion fila por fila (tr) en el tBody
             let tBody = "";
-            pacientes.forEach(p => {
+            asignaciones.forEach(p => {
                 tBody += `
                     <tr>
                         <td>${p.id}</td>
@@ -57,13 +57,13 @@ function cargarPacientes() {
                                 <button class="btn btn-sm btn-outline-warning col-3" 
                                     onclick="cambiarEstado(${p.id})">${p.activo ? "Desactivar" : "Activar"} </button> 
                                 <button class="btn btn-sm btn-outline-danger col-3" 
-                                    onclick="eliminarPaciente(${p.id})">Eliminar</button> 
+                                    onclick="eliminarAsignacion(${p.id})">Eliminar</button> 
                             </div> 
                         </td>
                     </tr>
                 `;
             });
-            tbodyPacientes.innerHTML = tBody;
+            tbodyAsignaciones.innerHTML = tBody;
         })
         .catch((error) =>
             mostrarError(error)
@@ -96,15 +96,15 @@ function validarDNI(dni) {
 
 
 // CREAR NUEVO PACIENTE
-// Al pulsar el botón 'Crear nuevo paciente' se abre el modal (dialog) con el formulario
-document.getElementById("btnCrearPaciente").onclick = () => {
-    dialogCrearPaciente.showModal();
+// Al pulsar el botón 'Crear nuevo asignacion' se abre el modal (dialog) con el formulario
+document.getElementById("btnCrearAsignacion").onclick = () => {
+    dialogCrearAsignacion.showModal();
 };
 
 const msgCrearError = document.getElementById("msgCrearError");
 
-// Al enviar el formulario se llama a la función crear paciente
-document.getElementById("formCrearPaciente").onsubmit = e => {
+// Al enviar el formulario se llama a la función crear asignacion
+document.getElementById("formCrearAsignacion").onsubmit = e => {
     e.preventDefault();
 
     // Validación del DNI
@@ -116,11 +116,11 @@ document.getElementById("formCrearPaciente").onsubmit = e => {
         return;
     }
 
-    crearPaciente();
+    crearAsignacion();
 };
-// Función que envía al backend los datos del nuevo paciente, se guardan y se recarga la tabla
-function crearPaciente() {
-    fetch("/admin/pacientes", {
+// Función que envía al backend los datos del nuevo asignacion, se guardan y se recarga la tabla
+function crearAsignacion() {
+    fetch("/admin/asignaciones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -134,13 +134,13 @@ function crearPaciente() {
         })
     })
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido crear el paciente.`; });
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se ha podido crear el asignacion.`; });
             return r.json();
         })
-        .then((pacienteCreado) => {
-            dialogCrearPaciente.close();
-            cargarPacientes();
-            cargarDialogAsignarMedico(pacienteCreado.id); // Se abre el dialog para asignar médico
+        .then((asignacionCreado) => {
+            dialogCrearAsignacion.close();
+            cargarAsignaciones();
+            cargarDialogAsignarMedico(asignacionCreado.id); // Se abre el dialog para asignar médico
         })
         .catch(e => {
             msgCrearError.textContent = e;
@@ -148,23 +148,23 @@ function crearPaciente() {
         });
 }
 
-dialogCrearPaciente.addEventListener("close", () => {
-    document.getElementById("formCrearPaciente").reset();
+dialogCrearAsignacion.addEventListener("close", () => {
+    document.getElementById("formCrearAsignacion").reset();
     msgCrearError.classList.add("d-none");
 });
 
 
 // EDITAR PACIENTE
 
-// Al pulsar el botón editar se llama a esta función que obtiene los datos del paciente por su id
+// Al pulsar el botón editar se llama a esta función que obtiene los datos del asignacion por su id
 function cargarDialogEditar(id) {
-    fetch("/admin/pacientes/" + id)
+    fetch("/admin/asignaciones/" + id)
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se han podido cargar los datos del paciente.`; });
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status}: No se han podido cargar los datos del asignacion.`; });
             return r.json();
         })
         .then(p => {
-            document.getElementById("idPacienteEditado").value = p.id;
+            document.getElementById("idAsignacionEditado").value = p.id;
             document.getElementById("nombreEditar").value = p.nombre;
             document.getElementById("apellidosEditar").value = p.apellidos;
             document.getElementById("dniEditar").value = p.dni;
@@ -172,15 +172,15 @@ function cargarDialogEditar(id) {
             document.getElementById("fechaNacimientoEditar").value = p.fechaNacimiento ?? "";
             document.getElementById("historialEditar").value = p.historial ?? "";
             document.getElementById("activoEditar").value = p.activo;
-            dialogEditarPaciente.showModal();
+            dialogEditarAsignacion.showModal();
         })
         .catch((error) =>
             alert(error)
         );
 }
 
-// Al enviar el formulario se llama a la función editar paciente
-document.getElementById("formEditarPaciente").onsubmit = e => {
+// Al enviar el formulario se llama a la función editar asignacion
+document.getElementById("formEditarAsignacion").onsubmit = e => {
     e.preventDefault();
 
     // Validación del DNI
@@ -191,13 +191,13 @@ document.getElementById("formEditarPaciente").onsubmit = e => {
         return;
     }
 
-    editarPaciente();
+    editarAsignacion();
 };
 
-function editarPaciente() {
-    const id = document.getElementById("idPacienteEditado").value;
+function editarAsignacion() {
+    const id = document.getElementById("idAsignacionEditado").value;
 
-    fetch("/admin/pacientes/" + id, {
+    fetch("/admin/asignaciones/" + id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -211,9 +211,9 @@ function editarPaciente() {
         })
     })
         .then(r => {
-            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status} No se ha podido editar el paciente.`; });
-            dialogEditarPaciente.close();
-            cargarPacientes();
+            if (!r.ok) return r.json().then(d => { throw d.errorMsg || `Error ${r.status} No se ha podido editar el asignacion.`; });
+            dialogEditarAsignacion.close();
+            cargarAsignaciones();
         })
         .catch((error) =>
             alert(error)
@@ -222,22 +222,22 @@ function editarPaciente() {
 
 // MODIFICAR ESTADO PACIENTE (Interruptor)
 // Se hace un fetch (metodo PUT) al metodo que acciona el interruptor
-// En el backend, el paciente cambia al estado contrario (activo -> inactivo, inactivo -> activo)
+// En el backend, el asignacion cambia al estado contrario (activo -> inactivo, inactivo -> activo)
 function cambiarEstado(id) {
-    fetch("/admin/pacientes/" + id + "/estado", { method: "PUT" })
-        .then(cargarPacientes)
+    fetch("/admin/asignaciones/" + id + "/estado", { method: "PUT" })
+        .then(cargarAsignaciones)
         .catch(() => mostrarError("Error al modificar estado"));
 }
 
 // ELIMINAR PACIENTE
-function eliminarPaciente(id) {
+function eliminarAsignacion(id) {
     // Se pide confirmación
-    if (!confirm(`¿Estás seguro/a de que quieres eliminar el paciente con id ${id}?`)) return;
+    if (!confirm(`¿Estás seguro/a de que quieres eliminar el asignacion con id ${id}?`)) return;
 
-    // Se hace un fetch con metodo DELETE para eliminar el paciente de la base de datos
-    fetch("/admin/pacientes/" + id, { method: "DELETE" })
-        .then(cargarPacientes) // Se recarga la tabla
-        .catch(() => mostrarError("Error al eliminar paciente."));
+    // Se hace un fetch con metodo DELETE para eliminar el asignacion de la base de datos
+    fetch("/admin/asignaciones/" + id, { method: "DELETE" })
+        .then(cargarAsignaciones) // Se recarga la tabla
+        .catch(() => mostrarError("Error al eliminar asignacion."));
 }
 
 
@@ -245,16 +245,16 @@ function eliminarPaciente(id) {
 
 // (Acceso 1: desde el form de editar)
 document.getElementById("btnCambiarMedico").onclick = () => {
-    const id = document.getElementById("idPacienteEditado").value;
-    dialogEditarPaciente.close();
+    const id = document.getElementById("idAsignacionEditado").value;
+    dialogEditarAsignacion.close();
     cargarDialogAsignarMedico(id);
 };
 
 // (Acceso 2: desde el botón del body)
 
-// Al pulsar el botón asignar médico se llama a esta función que obtiene los datos del paciente y los médicos disponibles
+// Al pulsar el botón asignar médico se llama a esta función que obtiene los datos del asignacion y los médicos disponibles
 function cargarDialogAsignarMedico(id) {
-    document.getElementById("idPacienteAsignarMedico").value = id;
+    document.getElementById("idAsignacionAsignarMedico").value = id;
     document.getElementById("msgDialogMedicoError").classList.add("d-none");
 
     // Cargar médicos disponibles
@@ -270,25 +270,25 @@ function cargarDialogAsignarMedico(id) {
             return r.json();
         })
         .then((medicosDisponibles) => {
-            // Cargar datos del paciente
-            return fetch("/admin/pacientes/" + id, {
+            // Cargar datos del asignacion
+            return fetch("/admin/asignaciones/" + id, {
                 method: "GET"
             })
                 .then((r) => {
                     if (!r.ok)
                         return r.json()
-                            .then(data => { throw data.errorMsg || `Error ${r.status}: No se han podido cargar los datos del paciente.`
+                            .then(data => { throw data.errorMsg || `Error ${r.status}: No se han podido cargar los datos del asignacion.`
                             });
                     return r.json();
                 })
-                .then((paciente) => {
-                    // Mostrar nombre del paciente en el dialog
-                    document.getElementById("nombrePacienteAsignarMedico").textContent = paciente.nombre + " " + paciente.apellidos;
+                .then((asignacion) => {
+                    // Mostrar nombre del asignacion en el dialog
+                    document.getElementById("nombreAsignacionAsignarMedico").textContent = asignacion.nombre + " " + asignacion.apellidos;
 
-                    // Obtener id del médico del paciente
-                    const medicoPaciente = paciente.medico ? paciente.medico.id : null;
+                    // Obtener id del médico del asignacion
+                    const medicoAsignacion = asignacion.medico ? asignacion.medico.id : null;
 
-                    // Se genera el input tipo radio dinámicamente, con el médico del paciente seleccionado por defecto
+                    // Se genera el input tipo radio dinámicamente, con el médico del asignacion seleccionado por defecto
                     const radioMedicosDiv = document.getElementById("radioMedicosDiv");
                     let htmlRadioMedicos = "";
 
@@ -296,7 +296,7 @@ function cargarDialogAsignarMedico(id) {
                         htmlRadioMedicos += `
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" value="${medico.id}" name="radioMedicos"
-                                       id="medico${medico.id}" ${medicoPaciente === medico.id ? 'checked' : ''} ${medico.activo ? '' : 'disabled'}>
+                                       id="medico${medico.id}" ${medicoAsignacion === medico.id ? 'checked' : ''} ${medico.activo ? '' : 'disabled'}>
                                 <label class="form-check-label" for="medico${medico.id}">${medico.nombre}</label>
                             </div>
                         `;
@@ -321,17 +321,17 @@ const msgDialogMedicoError = document.getElementById("msgDialogMedicoError");
 
 // Función que envía el médico seleccionado al backend
 function asignarMedico() {
-    const id = document.getElementById("idPacienteAsignarMedico").value;
+    const id = document.getElementById("idAsignacionAsignarMedico").value;
     const medicoSeleccionado = document.querySelector("input[name='radioMedicos']:checked");
 
     // Se comprueba que se haya seleccionado un médico
     if (!medicoSeleccionado) {
-        msgDialogMedicoError.textContent = "El paciente debe tener un médico asignado.";
+        msgDialogMedicoError.textContent = "El asignacion debe tener un médico asignado.";
         msgDialogMedicoError.classList.remove("d-none");
         return;
     }
 
-    fetch("/admin/pacientes/medico/" + id, {
+    fetch("/admin/asignaciones/medico/" + id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parseInt(medicoSeleccionado.value))
@@ -340,7 +340,7 @@ function asignarMedico() {
             .then(data => {throw data.errorMsg || `Error: ${r.status}. No se ha podido asignar el nuevo médico.`
             });
         dialogAsignarMedico.close(); // Se cierra el dialog
-        cargarPacientes(); // Se recargan los datos mostrados en la tabla
+        cargarAsignaciones(); // Se recargan los datos mostrados en la tabla
     }).catch((error) => {
         msgDialogMedicoError.textContent = error;
         msgDialogMedicoError.classList.remove("d-none");

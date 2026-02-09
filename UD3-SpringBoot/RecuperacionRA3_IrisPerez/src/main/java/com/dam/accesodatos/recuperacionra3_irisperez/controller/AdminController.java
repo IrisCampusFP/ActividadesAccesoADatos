@@ -4,9 +4,11 @@ import com.dam.accesodatos.recuperacionra3_irisperez.DTO.UsuarioDTO;
 import com.dam.accesodatos.recuperacionra3_irisperez.DTO.UsuarioUpdateDTO;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Camion;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Rol;
+import com.dam.accesodatos.recuperacionra3_irisperez.entity.Ruta;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Usuario;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.CamionService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.RolService;
+import com.dam.accesodatos.recuperacionra3_irisperez.service.RutaService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,19 @@ import java.util.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
+    private final RolService rolService;
+    private final CamionService camionService;
+    private final RutaService rutaService;
 
     @Autowired
-    RolService rolService;
-    @Autowired
-    private CamionService camionService;
+    public AdminController(UsuarioService usuarioService, RolService rolService, CamionService camionService, RutaService rutaService) {
+        this.usuarioService = usuarioService;
+        this.rolService = rolService;
+        this.camionService = camionService;
+        this.rutaService = rutaService;
+    }
+
 
     // ···················
     //      USUARIOS
@@ -148,7 +156,18 @@ public class AdminController {
     // ···················
     //      CAMIONES
     // ···················
-
+    
+    // Crear un nuevo camion
+    @PostMapping("/camiones")
+    public ResponseEntity<?> crearCamion(@RequestBody Camion camion, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        try {
+            Camion nuevoCamion = camionService.crearCamion(camion);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoCamion);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
 
     // Obtener todos los camiones
     @GetMapping("/camiones")
@@ -156,6 +175,36 @@ public class AdminController {
         usuarioService.comprobarAdmin(session);
         List<Camion> camiones = camionService.obtenerCamiones();
         return ResponseEntity.ok(camiones);
+    }
+
+    // Actualizar camion
+    @PutMapping("/camiones/{id}")
+    public ResponseEntity<?> actualizarCamion(@PathVariable Long id, @RequestBody Camion camionActualizado, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+
+        // Se actualiza el camion en la base de datos
+        try {
+            Camion camion = camionService.actualizarCamion(id, camionActualizado);
+            return ResponseEntity.ok(camion);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
+
+    // Obtener camion por ID
+    @GetMapping("/camiones/{id}")
+    public ResponseEntity<?> obtenerCamionPorId(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        Camion camion = camionService.obtenerCamionPorId(id);
+        return ResponseEntity.ok(camion);
+    }
+
+    // Cambiar estado del camion (activo/inactivo)
+    @PutMapping("/camiones/{id}/estado")
+    public ResponseEntity<?> cambiarEstadoCamion(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        camionService.interruptorEstado(id);
+        return ResponseEntity.noContent().build();
     }
 
     // Eliminar un camion
@@ -166,74 +215,67 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-//    // ···················
-//    //      PACIENTES
-//    // ···················
-//
-//    // Crear un nuevo paciente
-//    @PostMapping("/pacientes")
-//    public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente, HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//        try {
-//            PacienteDTO nuevoPaciente = pacienteService.crearPaciente(paciente);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
-//        }
-//    }
-//
-//    // Obtener todos los pacientes
-//    @GetMapping("/pacientes")
-//    public ResponseEntity<?> obtenerPacientes(HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//        List<PacienteDTO> pacientes = pacienteService.obtenerPacientes();
-//        return ResponseEntity.ok(pacientes);
-//    }
-//
-//    // Actualizar paciente
-//    // (Se utiliza PathVariable para asegurarnos de actualizar el paciente correspondiente)
-//    @PutMapping("/pacientes/{id}")
-//    public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteUpdateDTO pacienteActualizado, HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//
-//        // Se actualiza el paciente en la base de datos
-//        try {
-//            PacienteDTO paciente = pacienteService.actualizarPaciente(id, pacienteActualizado);
-//            return ResponseEntity.ok(paciente);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
-//        }
-//    }
-//
-//    // Obtener paciente por ID
-//    @GetMapping("/pacientes/{id}")
-//    public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long id, HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//        PacienteDTO paciente = pacienteService.obtenerPacientePorId(id);
-//        return ResponseEntity.ok(paciente);
-//    }
-//
-//    // Cambiar estado del paciente (activo/inactivo)
-//    @PutMapping("/pacientes/{id}/estado")
-//    public ResponseEntity<?> cambiarEstadoPaciente(@PathVariable Long id, HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//        pacienteService.interruptorEstado(id);
-//        return ResponseEntity.noContent().build();
-//    }
-//
-//    // Eliminar un paciente
-//    @DeleteMapping("/pacientes/{id}")
-//    public ResponseEntity<?> eliminarPaciente(@PathVariable Long id, HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//        pacienteService.eliminarPaciente(id);
-//        return ResponseEntity.noContent().build();
-//    }
-//
-//    // Asignar médico
-//    @PutMapping("/pacientes/medico/{id}")
-//    public ResponseEntity<?> actualizarMedicoPaciente(@PathVariable Long id, @RequestBody Long idMedico, HttpSession session) {
-//        usuarioService.comprobarAdmin(session);
-//        pacienteService.actualizarMedicoPaciente(id, idMedico);
-//        return ResponseEntity.noContent().build();
-//    }
+    
+    // ···················
+    //      RUTAS
+    // ···················
+
+    // Crear un nuevo ruta
+    @PostMapping("/rutas")
+    public ResponseEntity<?> crearRuta(@RequestBody Ruta ruta, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        try {
+            Ruta nuevoRuta = rutaService.crearRuta(ruta);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoRuta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
+
+    // Obtener todos los rutas
+    @GetMapping("/rutas")
+    public ResponseEntity<?> obtenerRutas(HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        List<Ruta> rutas = rutaService.obtenerRutas();
+        return ResponseEntity.ok(rutas);
+    }
+
+    // Actualizar ruta
+    @PutMapping("/rutas/{id}")
+    public ResponseEntity<?> actualizarRuta(@PathVariable Long id, @RequestBody Ruta rutaActualizado, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+
+        // Se actualiza el ruta en la base de datos
+        try {
+            Ruta ruta = rutaService.actualizarRuta(id, rutaActualizado);
+            return ResponseEntity.ok(ruta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
+
+    // Obtener ruta por ID
+    @GetMapping("/rutas/{id}")
+    public ResponseEntity<?> obtenerRutaPorId(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        Ruta ruta = rutaService.obtenerRutaPorId(id);
+        return ResponseEntity.ok(ruta);
+    }
+
+    // Cambiar estado de laruta (activo/inactivo)
+    @PutMapping("/rutas/{id}/estado")
+    public ResponseEntity<?> cambiarEstadoRuta(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        rutaService.interruptorEstado(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Eliminar un ruta
+    @DeleteMapping("/rutas/{id}")
+    public ResponseEntity<?> eliminarRuta(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        rutaService.eliminarRuta(id);
+        return ResponseEntity.noContent().build();
+
+    }
 }

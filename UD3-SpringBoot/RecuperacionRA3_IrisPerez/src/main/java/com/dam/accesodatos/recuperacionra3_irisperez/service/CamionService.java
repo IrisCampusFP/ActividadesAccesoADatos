@@ -1,13 +1,9 @@
 package com.dam.accesodatos.recuperacionra3_irisperez.service;
 
-import com.dam.accesodatos.recuperacionra3_irisperez.DTO.CamionUpdateDTO;
-import com.dam.accesodatos.recuperacionra3_irisperez.entity.Rol;
 import com.dam.accesodatos.recuperacionra3_irisperez.entity.Camion;
 import com.dam.accesodatos.recuperacionra3_irisperez.repository.RolRepository;
 import com.dam.accesodatos.recuperacionra3_irisperez.repository.CamionRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -71,7 +67,7 @@ public class CamionService {
     public Camion obtenerCamionDTOPorId(Long id) {
         Optional<Camion> camion = camionRepository.findById(id);
         if (camion.isPresent()) {
-            camion.get();
+            return camion.get();
         } else {
             throw new IllegalArgumentException("No se ha encontrado ningún camion con id: " + id);
         }
@@ -88,56 +84,31 @@ public class CamionService {
         }
     }
 
-    // Obtener camion por username
-    @Transactional(readOnly = true)
-    public Camion obtenerCamionPorUsername(String username) {
-        Camion camion = camionRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("No se ha encontrado ningún camion con el username '" + username + "'"));
-        return camion;
-    }
-
     // Obtener todos los camiones activos
     @Transactional(readOnly = true)
     public List<Camion> obtenerCamionesActivos() {
         return camionRepository.findByActivoTrue();
     }
 
-    // Obtener todos los médicos (camiones con rol MEDICO)
-    @Transactional(readOnly = true)
-    public List<Camion> obtenerCamionesMedico() {
-        return camionRepository.obtenerCamionesMedico();
-    }
 
-//    // UPDATE
-//
-//    /* Actualizar camion. No se actualiza si:
-//     * - El camion con los nuevos datos viene vacío
-//     * - El camion a actualizar no existe en la base de datos
-//     */
-//    @Transactional
-//    public Camion actualizarCamion(Long id, CamionUpdateDTO camionActualizado) {
-//        if(camionActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
-//
-//        Optional<Camion> camionAActualizar = camionRepository.findById(id);
-//
-//        if (camionAActualizar.isEmpty()) {
-//            throw new IllegalStateException("El camion no existe en la base de datos.");
-//        } else {
-//            Camion camion = camionAActualizar.get();
-//
-//            comprobarUsernameUnicoEditar(camion.getUsername(), camionActualizado.getUsername());
-//            comprobarEmailUnicoEditar(camion.getEmail(), camionActualizado.getEmail());
-//
-//            // Actualizo los campos (sobrescribo los originales con los nuevos)
-//            camion.setUsername(camionActualizado.getUsername());
-//            camion.setEmail(camionActualizado.getEmail());
-//            camion.setNombre(camionActualizado.getNombre());
-//            camion.setActivo(camionActualizado.getActivo());
-//
-//            // Guardo el camion en la base de datos y retorno los datos del camion actualizado
-//            return toDTO(camionRepository.save(camion));
-//        }
-//    }
+    // UPDATE
+
+    /* Actualizar camion. No se actualiza si:
+     * - El camion con los nuevos datos viene vacío
+     * - El camion a actualizar no existe en la base de datos
+     */
+    @Transactional
+    public Camion actualizarCamion(Long id, Camion camion) {
+        if(camion == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
+
+        Optional<Camion> camionAActualizar = camionRepository.findById(id);
+
+        if (camionAActualizar.isEmpty()) {
+            throw new IllegalStateException("El camion no existe en la base de datos.");
+        } else {
+            return camionRepository.save(camion);
+        }
+    }
 
 
     // DELETE lógico (Desactivar)
