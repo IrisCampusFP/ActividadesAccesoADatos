@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Camiones Registrados (Coordinador)</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/templates.css">
+</head>
+<body class="bg-dark text-light mt-4">
+
+<div class="container-fluid p-5">
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 px-2">
+        <div>
+            <h2 class="mb-0 text-gradient-primary">Panel de camiones registrados (Coordinador)</h2>
+        </div>
+        <div class="d-flex gap-3">
+            <button id="btnCrearCamion" class="btn btn-gradient-success">✛ Crear nuevo camion</button>
+            <a href="/vista" class="btn btn-outline-gradient-primary px-4">Volver</a>
+        </div>
+    </div>
+
+    <div id="recuadroAlert" class="alert alert-danger d-none" role="alert"></div>
+
+    <div class="card shadow-lg rounded-4 bg-dark text-light text-center">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th>Teléfono</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Historial</th>
+                        <th>Médico</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tBodyCamiones"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pop-up (dialog) crear camion -->
+<dialog id="dialogCrearCamion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+    <h4 class="text-gradient-success text-center mb-0">Crear camion</h4>
+
+    <form id="formCrearCamion">
+        <div class="mb-3">
+            <label for="nombreCrear" class="form-label">Nombre</label>
+            <input id="nombreCrear" class="form-control form-control-dark" type="text" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="apellidosCrear" class="form-label">Apellidos</label>
+            <input id="apellidosCrear" class="form-control form-control-dark" type="text" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="dniCrear" class="form-label">DNI</label>
+            <input id="dniCrear" class="form-control form-control-dark" type="text" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="telefonoCrear" class="form-label">Teléfono</label>
+            <input id="telefonoCrear" class="form-control form-control-dark" type="tel">
+        </div>
+
+        <div class="mb-3">
+            <label for="fechaNacimientoCrear" class="form-label">Fecha de nacimiento</label>
+            <input id="fechaNacimientoCrear" class="form-control form-control-dark" type="date">
+        </div>
+
+        <div class="mb-3">
+            <label for="historialCrear" class="form-label">Historial</label>
+            <textarea id="historialCrear" class="form-control form-control-dark"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="activoCrear" class="form-label">Estado</label>
+            <select id="activoCrear" class="form-control form-control-dark">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+
+        <div id="msgCrearError" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-outline-gradient-primary"
+                    onclick="document.getElementById('dialogCrearCamion').close()">Cancelar</button>
+            <button type="submit" class="btn btn-gradient-primary px-4 fs-5">Crear</button>
+        </div>
+    </form>
+</dialog>
+
+
+<!-- Pop-up (dialog) editar camion -->
+<dialog id="dialogEditarCamion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+    <h4 class="text-gradient-primary text-center">Editar camion</h4>
+    <form id="formEditarCamion">
+        <input type="hidden" id="idCamionEditado">
+
+        <div class="mb-3">
+            <label for="nombreEditar" class="form-label">Nombre</label>
+            <input id="nombreEditar" class="form-control form-control-dark" type="text" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="apellidosEditar" class="form-label">Apellidos</label>
+            <input id="apellidosEditar" class="form-control form-control-dark" type="text" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="dniEditar" class="form-label">DNI</label>
+            <input id="dniEditar" class="form-control form-control-dark" type="text" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="telefonoEditar" class="form-label">Teléfono</label>
+            <input id="telefonoEditar" class="form-control form-control-dark" type="tel">
+        </div>
+
+        <div class="mb-3">
+            <label for="fechaNacimientoEditar" class="form-label">Fecha de nacimiento</label>
+            <input id="fechaNacimientoEditar" class="form-control form-control-dark" type="date">
+        </div>
+
+        <div class="mb-3">
+            <label for="historialEditar" class="form-label">Historial</label>
+            <textarea id="historialEditar" class="form-control form-control-dark"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="activoEditar" class="form-label">Estado</label>
+            <select id="activoEditar" class="form-control form-control-dark">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+
+        <div class="d-grid mb-3">
+            <button type="button" class="btn btn-outline-gradient-primary" id="btnCambiarMedico">Cambiar Médico</button>
+        </div>
+
+        <div id="editError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
+
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dialogEditarCamion').close()">Cancelar</button>
+            <button type="submit" class="btn btn-gradient-primary" id="btnGuardarEdicion">Guardar</button>
+        </div>
+    </form>
+
+</dialog>
+
+<!-- Pop-up (dialog) asignar médico -->
+<dialog id="dialogAsignarMedico" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+    <h4 class="text-gradient-success text-center mb-4">Asignar médico</h4>
+
+    <p class="mb-3"><strong>Camion:</strong> <span id="nombreCamionAsignarMedico"></span></p>
+
+    <form id="formAsignarMedico">
+        <input type="hidden" id="idCamionAsignarMedico">
+
+        <div class="">
+            <label class="form-label">Seleccionar médico:</label>
+            <div id="radioMedicosDiv" class="d-flex flex-column gap-2">
+                <!-- Input tipo radio dínámico que obtiene los médicos disponibles de la base de datos con js -->
+            </div>
+        </div>
+
+        <div id="msgDialogMedicoError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
+
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            <button type="button" class="btn btn-outline-gradient-primary"
+                    onclick="document.getElementById('dialogAsignarMedico').close()">Cancelar</button>
+            <button type="submit" class="btn btn-gradient-primary px-4">Guardar</button>
+        </div>
+    </form>
+</dialog>
+
+<script src="/js/COORDINADOR/camionesCoordinador.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js"></script>
+
+</body>
+</html>
