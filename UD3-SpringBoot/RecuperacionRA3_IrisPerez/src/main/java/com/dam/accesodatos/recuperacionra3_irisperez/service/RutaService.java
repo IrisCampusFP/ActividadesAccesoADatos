@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * SERVICIO: RutaService
-
+ * 
  * Anotaciones utilizadas:
  * - @Service: Marca la clase como un componente de servicio de Spring.
  * - @Transactional: Gestiona automáticamente las transacciones.
@@ -46,8 +46,7 @@ public class RutaService {
                 ruta.getHora_inicio(),
                 ruta.getHora_fin(),
                 ruta.getActiva(),
-                ruta.getAsignaciones()
-        );
+                ruta.getAsignaciones() != null ? ruta.getAsignaciones().size() : 0);
     }
 
     @Transactional(readOnly = true)
@@ -55,26 +54,24 @@ public class RutaService {
         return rutas.stream().map(this::toDTO).toList();
     }
 
-
-
     // CREATE
 
-    /* Crear ruta. No se crea el ruta si:
-     * - Viene vacío
-     * - Ya existe un ruta con ese username
-     * - Ya existe un ruta con ese email
+    /*
+     * Crear ruta. No se crea el ruta si:
+     * - Viene vacía
      */
     @Transactional
     public Ruta crearRuta(Ruta ruta) {
 
-        if (ruta == null) throw new IllegalArgumentException("Ruta nula");
+        if (ruta == null)
+            throw new IllegalArgumentException("Ruta nula");
 
         return rutaRepository.save(ruta);
     }
 
     // READ
 
-    // Obtener todos los rutaes
+    // Obtener todos los rutas
     @Transactional(readOnly = true)
     public List<RutaDTO> obtenerRutas() {
         return toDTOList(rutaRepository.findAll());
@@ -113,7 +110,8 @@ public class RutaService {
     // Actualizar ruta
     @Transactional
     public RutaDTO actualizarRuta(Long id, RutaUpdateDTO rutaActualizado) {
-        if(rutaActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
+        if (rutaActualizado == null)
+            throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
 
         Optional<Ruta> rutaAActualizar = rutaRepository.findById(id);
 
@@ -130,7 +128,7 @@ public class RutaService {
             ruta.setHora_fin(rutaActualizado.getHora_fin());
             ruta.setActiva(rutaActualizado.getActiva());
 
-            // Guardo el ruta en la base de datos y retorno los datos del ruta actualizado
+            // Guardo la ruta en la base de datos y retorno los datos de la ruta actualizada
             return toDTO(rutaRepository.save(ruta));
         }
     }
@@ -139,7 +137,8 @@ public class RutaService {
 
     // Metodo que cambia el estado de la ruta al contrario (activo -> inactivo, inactivo -> activo)
     public void interruptorEstado(Long id) {
-        Ruta r = rutaRepository.findById(id).orElseThrow(() -> new IllegalStateException("No se ha encontrado ningún ruta con id: " + id));
+        Ruta r = rutaRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado ningún ruta con id: " + id));
         r.setActiva(!r.getActiva()); // Cambia al estado contrario
         rutaRepository.save(r);
     }
@@ -149,7 +148,8 @@ public class RutaService {
     // Eliminar ruta de la BD
     @Transactional
     public void eliminarRuta(Long id) {
-        if(!rutaRepository.existsById(id)) throw new IllegalStateException("No se ha encontrado ningún ruta con id: " + id);
+        if (!rutaRepository.existsById(id))
+            throw new IllegalStateException("No se ha encontrado ningún ruta con id: " + id);
         rutaRepository.deleteById(id);
     }
 

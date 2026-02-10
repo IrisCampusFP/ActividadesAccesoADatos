@@ -3,6 +3,7 @@ package com.dam.accesodatos.recuperacionra3_irisperez.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "asignaciones")
 public class Ruta implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -49,14 +51,6 @@ public class Ruta implements Serializable {
     // Reemplazar el @ManyToMany por:
     @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Asignacion> asignaciones = new HashSet<>();
-
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "asignaciones",
-//            joinColumns = @JoinColumn(name = "ruta_id"),
-//            inverseJoinColumns = @JoinColumn(name = "camion_id")
-//    )
-//    private Set<Camion> camiones = new HashSet<>();
 
     /*
      * Callback JPA que se ejecuta antes de insertar la entidad.

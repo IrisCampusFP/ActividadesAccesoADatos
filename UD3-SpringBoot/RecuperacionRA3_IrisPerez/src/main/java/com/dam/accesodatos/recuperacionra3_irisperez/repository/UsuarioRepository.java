@@ -41,7 +41,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     // Comprobar si existe un usuario con email
     boolean existsByEmail(String email);
 
-    // Obtener usuarios con rol 'MEDICO'
-    @Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.nombre = 'MEDICO'")
-    List<Usuario> obtenerUsuariosMedico();
 }

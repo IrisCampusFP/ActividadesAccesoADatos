@@ -1,9 +1,9 @@
 package com.dam.accesodatos.recuperacionra3_irisperez.controller;
 
+import com.dam.accesodatos.recuperacionra3_irisperez.DTO.AsignacionDTO;
 import com.dam.accesodatos.recuperacionra3_irisperez.DTO.CamionDTO;
 import com.dam.accesodatos.recuperacionra3_irisperez.DTO.RutaDTO;
-import com.dam.accesodatos.recuperacionra3_irisperez.entity.Camion;
-import com.dam.accesodatos.recuperacionra3_irisperez.entity.Ruta;
+import com.dam.accesodatos.recuperacionra3_irisperez.service.AsignacionService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.CamionService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.RutaService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.UsuarioService;
@@ -12,27 +12,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
-@RequestMapping("/recepcion")
+@RequestMapping("/coordinador")
 public class CoordinadorController {
 
-
-    UsuarioService usuarioService;
-    CamionService camionService;
-    RutaService rutaService;
+    private final UsuarioService usuarioService;
+    private final CamionService camionService;
+    private final RutaService rutaService;
+    private final AsignacionService asignacionService;
 
     @Autowired
-    public CoordinadorController(UsuarioService usuarioService, CamionService camionService, RutaService rutaService) {
+    public CoordinadorController(UsuarioService usuarioService, CamionService camionService, RutaService rutaService,
+            AsignacionService asignacionService) {
         this.usuarioService = usuarioService;
         this.camionService = camionService;
         this.rutaService = rutaService;
+        this.asignacionService = asignacionService;
     }
 
     // ···················
-    //      CAMIONES
+    // CAMIONES
     // ···················
 
     // Obtener todos los camiones
@@ -44,7 +45,7 @@ public class CoordinadorController {
     }
 
     // ···················
-    //      RUTAS
+    // RUTAS
     // ···················
 
     // Obtener todas las rutas
@@ -54,5 +55,38 @@ public class CoordinadorController {
         List<RutaDTO> rutas = rutaService.obtenerRutas();
         return ResponseEntity.ok(rutas);
     }
-}
 
+    // ···················
+    // ASIGNACIONES
+    // ···················
+
+    // Obtener todas las asignaciones
+    @GetMapping("/asignaciones")
+    public ResponseEntity<?> obtenerAsignaciones(HttpSession session) {
+        usuarioService.comprobarCoordinador(session);
+        List<AsignacionDTO> asignaciones = asignacionService.obtenerAsignaciones();
+        return ResponseEntity.ok(asignaciones);
+    }
+
+    // Crear una nueva asignación
+    @PostMapping("/asignaciones")
+    public ResponseEntity<?> crearAsignacion(@RequestBody Map<String, Long> body, HttpSession session) {
+        usuarioService.comprobarCoordinador(session);
+        try {
+            Long camionId = body.get("camionId");
+            Long rutaId = body.get("rutaId");
+            AsignacionDTO nuevaAsignacion = asignacionService.crearAsignacion(camionId, rutaId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
+
+    // Eliminar una asignación
+    @DeleteMapping("/asignaciones/{id}")
+    public ResponseEntity<?> eliminarAsignacion(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarCoordinador(session);
+        asignacionService.eliminarAsignacion(id);
+        return ResponseEntity.noContent().build();
+    }
+}

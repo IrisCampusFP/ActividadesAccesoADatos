@@ -9,6 +9,7 @@ import com.dam.accesodatos.recuperacionra3_irisperez.service.CamionService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.RolService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.RutaService;
 import com.dam.accesodatos.recuperacionra3_irisperez.service.UsuarioService;
+import com.dam.accesodatos.recuperacionra3_irisperez.service.AsignacionService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,17 @@ public class AdminController {
     private final RolService rolService;
     private final CamionService camionService;
     private final RutaService rutaService;
+    private final AsignacionService asignacionService;
 
     @Autowired
-    public AdminController(UsuarioService usuarioService, RolService rolService, CamionService camionService, RutaService rutaService) {
+    public AdminController(UsuarioService usuarioService, RolService rolService, CamionService camionService,
+            RutaService rutaService, AsignacionService asignacionService) {
         this.usuarioService = usuarioService;
         this.rolService = rolService;
         this.camionService = camionService;
         this.rutaService = rutaService;
+        this.asignacionService = asignacionService;
     }
-
 
     // ···················
     //      USUARIOS
@@ -59,9 +62,11 @@ public class AdminController {
     }
 
     // Actualizar usuario
-    // (Se utiliza PathVariable para asegurarnos de actualizar el usuario correspondiente)
+    // (Se utiliza PathVariable para asegurarnos de actualizar el usuario
+    // correspondiente)
     @PutMapping("/usuarios/{id}")
-    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioUpdateDTO usuarioActualizado, HttpSession session) {
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioUpdateDTO usuarioActualizado,
+            HttpSession session) {
         usuarioService.comprobarAdmin(session);
 
         // Se actualiza el usuario en la base de datos
@@ -130,7 +135,7 @@ public class AdminController {
 
     // Obtener todos los roles
     @GetMapping("/usuarios/roles")
-    public ResponseEntity<?>obtenerRolesUsuario(HttpSession session) {
+    public ResponseEntity<?> obtenerRolesUsuario(HttpSession session) {
         usuarioService.comprobarAdmin(session);
         List<Rol> roles = rolService.obtenerRoles();
         return ResponseEntity.ok(roles);
@@ -138,24 +143,18 @@ public class AdminController {
 
     // Asignar roles
     @PutMapping("/usuarios/roles/{id}")
-    public ResponseEntity<?> actualizarRolesUsuario(@PathVariable Long id, @RequestBody List<Long> idsRoles, HttpSession session) {
+    public ResponseEntity<?> actualizarRolesUsuario(@PathVariable Long id, @RequestBody List<Long> idsRoles,
+            HttpSession session) {
         usuarioService.comprobarAdmin(session);
         usuarioService.actualizarRolesUsuario(id, idsRoles);
         return ResponseEntity.noContent().build();
     }
 
-    // Obtener médicos disponibles
-    @GetMapping("/usuarios/medico")
-    public ResponseEntity<?> obtenerUsuariosMedico(HttpSession session) {
-        usuarioService.comprobarAdmin(session);
-        List<UsuarioDTO> medicos = usuarioService.obtenerUsuariosMedico();
-        return ResponseEntity.ok(medicos);
-    }
 
     // ···················
     //      CAMIONES
     // ···················
-    
+
     // Crear un nuevo camion
     @PostMapping("/camiones")
     public ResponseEntity<?> crearCamion(@RequestBody Camion camion, HttpSession session) {
@@ -178,7 +177,8 @@ public class AdminController {
 
     // Actualizar camion
     @PutMapping("/camiones/{id}")
-    public ResponseEntity<?> actualizarCamion(@PathVariable Long id, @RequestBody CamionUpdateDTO camionActualizado, HttpSession session) {
+    public ResponseEntity<?> actualizarCamion(@PathVariable Long id, @RequestBody CamionUpdateDTO camionActualizado,
+            HttpSession session) {
         usuarioService.comprobarAdmin(session);
 
         // Se actualiza el camion en la base de datos
@@ -215,7 +215,7 @@ public class AdminController {
     }
 
     // ···················
-    //      RUTAS
+    //       RUTAS
     // ···················
 
     // Crear un nuevo ruta
@@ -240,10 +240,11 @@ public class AdminController {
 
     // Actualizar ruta
     @PutMapping("/rutas/{id}")
-    public ResponseEntity<?> actualizarRuta(@PathVariable Long id, @RequestBody RutaUpdateDTO rutaActualizado, HttpSession session) {
+    public ResponseEntity<?> actualizarRuta(@PathVariable Long id, @RequestBody RutaUpdateDTO rutaActualizado,
+            HttpSession session) {
         usuarioService.comprobarAdmin(session);
 
-        // Se actualiza el ruta en la base de datos
+        // Se actualiza la ruta en la base de datos
         try {
             RutaDTO ruta = rutaService.actualizarRuta(id, rutaActualizado);
             return ResponseEntity.ok(ruta);
@@ -260,7 +261,7 @@ public class AdminController {
         return ResponseEntity.ok(ruta);
     }
 
-    // Cambiar estado del ruta (activo/inactivo)
+    // Cambiar estado de la ruta (activo/inactivo)
     @PutMapping("/rutas/{id}/estado")
     public ResponseEntity<?> cambiarEstadoRuta(@PathVariable Long id, HttpSession session) {
         usuarioService.comprobarAdmin(session);
@@ -275,5 +276,39 @@ public class AdminController {
         rutaService.eliminarRuta(id);
         return ResponseEntity.noContent().build();
     }
-    
+
+    // ···················
+    // ASIGNACIONES
+    // ···················
+
+    // Obtener todas las asignaciones
+    @GetMapping("/asignaciones")
+    public ResponseEntity<?> obtenerAsignaciones(HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        List<AsignacionDTO> asignaciones = asignacionService.obtenerAsignaciones();
+        return ResponseEntity.ok(asignaciones);
+    }
+
+    // Crear una nueva asignación
+    @PostMapping("/asignaciones")
+    public ResponseEntity<?> crearAsignacion(@RequestBody Map<String, Long> body, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        try {
+            Long camionId = body.get("camionId");
+            Long rutaId = body.get("rutaId");
+            AsignacionDTO nuevaAsignacion = asignacionService.crearAsignacion(camionId, rutaId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("errorMsg", e.getMessage()));
+        }
+    }
+
+    // Eliminar una asignación
+    @DeleteMapping("/asignaciones/{id}")
+    public ResponseEntity<?> eliminarAsignacion(@PathVariable Long id, HttpSession session) {
+        usuarioService.comprobarAdmin(session);
+        asignacionService.eliminarAsignacion(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

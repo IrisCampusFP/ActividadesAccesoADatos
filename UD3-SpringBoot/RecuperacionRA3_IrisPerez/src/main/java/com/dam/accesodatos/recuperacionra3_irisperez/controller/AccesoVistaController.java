@@ -45,23 +45,6 @@ public class AccesoVistaController {
         }
     }
 
-//    // Controla el acceso a la vista de gestión de pacientes para ADMIN
-//    @GetMapping("/gestionPacientesAdmin")
-//    public String accesoGestionPacientesAdmin(HttpSession session) {
-//        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
-//
-//        if (usuario != null) {
-//            if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("ADMIN")) ||
-//                    usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("MEDICO"))) {
-//                return "gestionCamionesAdmin";
-//            } else {
-//                return "redirect:/vista";
-//            }
-//        } else {
-//            return "redirect:/killSession";
-//        }
-//    }
-
     // Controla el acceso a la vista de camiones
     @GetMapping("/camiones")
     public String accesoVistaCamiones(HttpSession session) {
@@ -116,19 +99,4 @@ public class AccesoVistaController {
         }
     }
 
-//    // Controla el acceso a la vista de lista de pacientes para RECEPCION
-//    @GetMapping("/listaPacientes")
-//    public String accesoListaPacientes(HttpSession session) {
-//        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioDTO");
-//
-//        if (usuario != null) {
-//            if (usuario.getRoles().stream().anyMatch(roles -> roles.getNombre().equalsIgnoreCase("RECEPCION"))) {
-//                return "RECEPCION/listaPacientes";
-//            } else {
-//                return "redirect:/vista";
-//            }
-//        } else {
-//            return "redirect:/killSession";
-//        }
-//    }
 }

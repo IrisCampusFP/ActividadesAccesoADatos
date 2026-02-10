@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "asignaciones")
 public class Camion implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -52,14 +54,6 @@ public class Camion implements Serializable {
 
     @OneToMany(mappedBy = "camion", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Asignacion> asignaciones = new HashSet<>();
-
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "asignaciones",
-//            joinColumns = @JoinColumn(name = "camion_id"),
-//            inverseJoinColumns = @JoinColumn(name = "ruta_id")
-//    )
-//    private Set<Ruta> rutas = new HashSet<>();
 
     /*
      * Callback JPA que se ejecuta antes de insertar la entidad.

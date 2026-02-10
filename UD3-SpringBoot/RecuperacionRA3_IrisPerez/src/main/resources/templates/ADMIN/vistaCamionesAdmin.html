@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,152 +9,156 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/templates.css">
 </head>
+
 <body class="bg-dark text-light mt-4">
 
-<div class="container-fluid p-5">
-    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 px-2">
-        <div>
-            <h2 class="mb-0 text-gradient-primary">Panel de camiones registrados (Admin)</h2>
+    <div class="container-fluid p-5">
+        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 px-2">
+            <div>
+                <h2 class="mb-0 text-gradient-primary">Panel de camiones registrados (Admin)</h2>
+            </div>
+            <div class="d-flex gap-3">
+                <button id="btnCrearCamion" class="btn btn-gradient-success">✛ Crear nuevo camion</button>
+                <a href="/vista" class="btn btn-outline-gradient-primary px-4">Volver</a>
+            </div>
         </div>
-        <div class="d-flex gap-3">
-            <button id="btnCrearCamion" class="btn btn-gradient-success">✛ Crear nuevo camion</button>
-            <a href="/vista" class="btn btn-outline-gradient-primary px-4">Volver</a>
-        </div>
-    </div>
 
-    <div id="recuadroAlert" class="alert alert-danger d-none" role="alert"></div>
+        <div id="recuadroAlert" class="alert alert-danger d-none" role="alert"></div>
 
-    <div class="card shadow-lg rounded-4 bg-dark text-light text-center">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Matricula</th>
-                        <th>Modelo</th>
-                        <th>Capacidad (Kg)</th>
-                        <th>Estado</th>
-                        <th>Fecha Alta</th>
-                        <th>Rutas Asignadas</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody id="tBodyCamiones"></tbody>
-                </table>
+        <div class="card shadow-lg rounded-4 bg-dark text-light text-center">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Matricula</th>
+                                <th>Modelo</th>
+                                <th>Capacidad (Kg)</th>
+                                <th>Estado</th>
+                                <th>Fecha Alta</th>
+                                <th>Activo</th>
+                                <th>Rutas Asignadas</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tBodyCamiones"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Pop-up (dialog) crear camion -->
-<dialog id="dialogCrearCamion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-success text-center mb-0">Crear camion</h4>
+    <!-- Pop-up (dialog) crear camion -->
+    <dialog id="dialogCrearCamion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+        <h4 class="text-gradient-success text-center mb-4">Crear nuevo camión</h4>
 
-    <form id="formCrearCamion">
-        <div class="mb-3">
-            <label for="matriculaCrear" class="form-label">Matricula</label>
-            <input id="matriculaCrear" class="form-control form-control-dark" type="text" required>
-        </div>
+        <form id="formCrearCamion">
+            <div class="mb-3">
+                <label for="matriculaCrear" class="form-label">Matricula</label>
+                <input id="matriculaCrear" class="form-control form-control-dark" type="text" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="modeloCrear" class="form-label">Modelo</label>
-            <input id="modeloCrear" class="form-control form-control-dark" type="text" required>
-        </div>
+            <div class="mb-3">
+                <label for="modeloCrear" class="form-label">Modelo</label>
+                <input id="modeloCrear" class="form-control form-control-dark" type="text" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="capacidadCrear" class="form-label">Capacidad (Kg)</label>
-            <input id="capacidadCrear" class="form-control form-control-dark" type="number" required>
-        </div>
+            <div class="mb-3">
+                <label for="capacidadCrear" class="form-label">Capacidad (Kg)</label>
+                <input id="capacidadCrear" class="form-control form-control-dark" type="number" step="0.01" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="estadoCrear" class="form-label">Estado</label>
-            <select id="estadoCrear" class="form-control form-control-dark">
-                <option value="DISPONIBLE">Disponible</option>
-                <option value="EN_RUTA">En ruta</option>
-                <option value="MANTENIMIENTO">Mantenimiento</option>
-            </select>
-        </div>
+            <div class="mb-3">
+                <label for="estadoCrear" class="form-label">Estado</label>
+                <select id="estadoCrear" class="form-control form-control-dark">
+                    <option value="DISPONIBLE">Disponible</option>
+                    <option value="EN_RUTA">En ruta</option>
+                    <option value="MANTENIMIENTO">Mantenimiento</option>
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label for="fechaAltaCrear" class="form-label">Fecha de alta</label>
-            <input id="fechaAltaCrear" class="form-control form-control-dark" type="date">
-        </div>
+            <div class="mb-3">
+                <label for="fechaAltaCrear" class="form-label">Fecha de alta</label>
+                <input id="fechaAltaCrear" class="form-control form-control-dark" type="date">
+            </div>
 
-        <div class="mb-3">
-            <label for="activoCrear" class="form-label">Activo</label>
-            <select id="activoCrear" class="form-control form-control-dark">
-                <option value="true">Si</option>
-                <option value="false">No</option>
-            </select>
-        </div>
-        
-        <div id="msgCrearError" class="alert alert-danger d-none" role="alert"></div>
+            <div class="mb-3">
+                <label for="activoCrear" class="form-label">Activo</label>
+                <select id="activoCrear" class="form-control form-control-dark">
+                    <option value="true">Si</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
 
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <button type="button" class="btn btn-outline-gradient-primary"
+            <div id="msgCrearError" class="alert alert-danger d-none" role="alert"></div>
+
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <button type="button" class="btn btn-outline-gradient-primary"
                     onclick="document.getElementById('dialogCrearCamion').close()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary px-4 fs-5">Crear</button>
-        </div>
-    </form>
-</dialog>
+                <button type="submit" class="btn btn-gradient-primary px-4 fs-5">Crear</button>
+            </div>
+        </form>
+    </dialog>
 
 
-<!-- Pop-up (dialog) editar camion -->
-<dialog id="dialogEditarCamion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-    <h4 class="text-gradient-primary text-center">Editar camion</h4>
-    <form id="formEditarCamion">
-        <input type="hidden" id="idCamionEditado">
+    <!-- Pop-up (dialog) editar camion -->
+    <dialog id="dialogEditarCamion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+        <h4 class="text-gradient-primary text-center mb-4">Editar camión</h4>
+        <form id="formEditarCamion">
+            <input type="hidden" id="idCamionEditado">
 
-        <div class="mb-3">
-            <label for="matriculaEditar" class="form-label">Matricula</label>
-            <input id="matriculaEditar" class="form-control form-control-dark" type="text" required>
-        </div>
+            <div class="mb-3">
+                <label for="matriculaEditar" class="form-label">Matricula</label>
+                <input id="matriculaEditar" class="form-control form-control-dark" type="text" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="modeloEditar" class="form-label">Modelo</label>
-            <input id="modeloEditar" class="form-control form-control-dark" type="text" required>
-        </div>
+            <div class="mb-3">
+                <label for="modeloEditar" class="form-label">Modelo</label>
+                <input id="modeloEditar" class="form-control form-control-dark" type="text" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="capacidadEditar" class="form-label">Capacidad (Kg)</label>
-            <input id="capacidadEditar" class="form-control form-control-dark" type="number" required>
-        </div>
+            <div class="mb-3">
+                <label for="capacidadEditar" class="form-label">Capacidad (Kg)</label>
+                <input id="capacidadEditar" class="form-control form-control-dark" type="number" step="0.01" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="estadoEditar" class="form-label">Estado</label>
-            <select id="estadoEditar" class="form-control form-control-dark">
-                <option value="DISPONIBLE">Disponible</option>
-                <option value="EN_RUTA">En ruta</option>
-                <option value="MANTENIMIENTO">Mantenimiento</option>
-            </select>
-        </div>
+            <div class="mb-3">
+                <label for="estadoEditar" class="form-label">Estado</label>
+                <select id="estadoEditar" class="form-control form-control-dark">
+                    <option value="DISPONIBLE">Disponible</option>
+                    <option value="EN_RUTA">En ruta</option>
+                    <option value="MANTENIMIENTO">Mantenimiento</option>
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label for="fechaAltaEditar" class="form-label">Fecha de alta</label>
-            <input id="fechaAltaEditar" class="form-control form-control-dark" type="date">
-        </div>
+            <div class="mb-3">
+                <label for="fechaAltaEditar" class="form-label">Fecha de alta</label>
+                <input id="fechaAltaEditar" class="form-control form-control-dark" type="date">
+            </div>
 
-        <div class="mb-3">
-            <label for="activoEditar" class="form-label">Activo</label>
-            <select id="activoEditar" class="form-control form-control-dark">
-                <option value="true">Si</option>
-                <option value="false">No</option>
-            </select>
-        </div>
+            <div class="mb-3">
+                <label for="activoEditar" class="form-label">Activo</label>
+                <select id="activoEditar" class="form-control form-control-dark">
+                    <option value="true">Si</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
 
-        <div id="editError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
+            <div id="editError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
 
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dialogEditarCamion').close()">Cancelar</button>
-            <button type="submit" class="btn btn-gradient-primary" id="btnGuardarEdicion">Guardar</button>
-        </div>
-    </form>
-</dialog>
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <button type="button" class="btn btn-secondary"
+                    onclick="document.getElementById('dialogEditarCamion').close()">Cancelar</button>
+                <button type="submit" class="btn btn-gradient-primary" id="btnGuardarEdicion">Guardar</button>
+            </div>
+        </form>
+    </dialog>
 
-<script src="/js/ADMIN/camionesAdmin.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js"></script>
+    <script src="/js/ADMIN/camionesAdmin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js"></script>
 
 </body>
+
 </html>

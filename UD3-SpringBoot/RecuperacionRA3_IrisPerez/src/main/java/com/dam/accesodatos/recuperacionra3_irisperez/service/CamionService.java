@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * SERVICIO: CamionService
-
+ * 
  * Anotaciones utilizadas:
  * - @Service: Marca la clase como un componente de servicio de Spring.
  * - @Transactional: Gestiona automáticamente las transacciones.
@@ -48,8 +48,7 @@ public class CamionService {
                 camion.getEstado(),
                 camion.getFecha_alta(),
                 camion.getActivo(),
-                camion.getAsignaciones()
-        );
+                camion.getAsignaciones() != null ? camion.getAsignaciones().size() : 0);
     }
 
     @Transactional(readOnly = true)
@@ -57,10 +56,10 @@ public class CamionService {
         return camiones.stream().map(this::toDTO).toList();
     }
 
-
     // CREATE
 
-    /* Crear camion. No se crea el camion si:
+    /*
+     * Crear camion. No se crea el camion si:
      * - Viene vacío
      * - Ya existe un camion con ese username
      * - Ya existe un camion con ese email
@@ -68,8 +67,8 @@ public class CamionService {
     @Transactional
     public CamionDTO crearCamion(Camion camion) {
 
-        if (camion == null) throw new IllegalArgumentException("Camion nulo");
-
+        if (camion == null)
+            throw new IllegalArgumentException("Camion nulo");
 
         return toDTO(camionRepository.save(camion));
     }
@@ -110,16 +109,17 @@ public class CamionService {
         return toDTOList(camionRepository.findByActivoTrue());
     }
 
-
     // UPDATE
 
-    /* Actualizar camion. No se actualiza si:
+    /*
+     * Actualizar camion. No se actualiza si:
      * - El camion con los nuevos datos viene vacío
      * - El camion a actualizar no existe en la base de datos
      */
     @Transactional
     public CamionDTO actualizarCamion(Long id, CamionUpdateDTO camionActualizado) {
-        if(camionActualizado == null) throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
+        if (camionActualizado == null)
+            throw new IllegalArgumentException("No se han recibido correctamente los nuevos datos.");
 
         Optional<Camion> camionAActualizar = camionRepository.findById(id);
 
@@ -136,17 +136,19 @@ public class CamionService {
             camion.setFecha_alta(camionActualizado.getFechaAlta());
             camion.setActivo(camionActualizado.getActivo());
 
-            // Guardo el camion en la base de datos y retorno los datos del camion actualizado
+            // Guardo el camion en la base de datos y retorno los datos del camion
+            // actualizado
             return toDTO(camionRepository.save(camion));
         }
     }
 
-
     // DELETE lógico (Desactivar)
 
-    // Metodo que cambia el estado del camion al contrario (activo -> inactivo, inactivo -> activo)
+    // Metodo que cambia el estado del camion al contrario (activo -> inactivo,
+    // inactivo -> activo)
     public void interruptorEstado(Long id) {
-        Camion u = camionRepository.findById(id).orElseThrow(() -> new IllegalStateException("No se ha encontrado ningún camion con id: " + id));
+        Camion u = camionRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado ningún camion con id: " + id));
         u.setActivo(!u.getActivo()); // Cambia al estado contrario
         camionRepository.save(u);
     }
@@ -156,7 +158,8 @@ public class CamionService {
     // Eliminar camion de la BD
     @Transactional
     public void eliminarCamion(Long id) {
-        if(!camionRepository.existsById(id)) throw new IllegalStateException("No se ha encontrado ningún camion con id: " + id);
+        if (!camionRepository.existsById(id))
+            throw new IllegalStateException("No se ha encontrado ningún camion con id: " + id);
         camionRepository.deleteById(id);
     }
 

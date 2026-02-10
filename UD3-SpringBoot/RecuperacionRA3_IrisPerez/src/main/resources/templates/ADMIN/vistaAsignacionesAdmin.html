@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,51 +9,78 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/templates.css">
 </head>
+
 <body class="bg-dark text-light mt-4">
 
-<div class="container-fluid p-5">
-    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 px-2">
-        <div>
-            <h2 class="mb-0 text-gradient-primary">Panel de asignaciones (Admin)</h2>
+    <div class="container-fluid p-5">
+        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 px-2">
+            <div>
+                <h2 class="mb-0 text-gradient-primary">Panel de asignaciones (Admin)</h2>
+            </div>
+            <div class="d-flex gap-3">
+                <button id="btnCrearAsignacion" class="btn btn-gradient-success">✛ Crear nueva asignación</button>
+                <a href="/vista" class="btn btn-outline-gradient-primary px-4">Volver</a>
+            </div>
         </div>
-        <div class="d-flex gap-3">
-            <button id="btnCrearAsignacion" class="btn btn-gradient-success">✛ Crear nueva asignación</button>
-            <a href="/vista" class="btn btn-outline-gradient-primary px-4">Volver</a>
+
+        <div id="recuadroAlert" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="card shadow-lg rounded-4 bg-dark text-light text-center">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Camion (Matrícula)</th>
+                                <th>Modelo</th>
+                                <th>Ruta</th>
+                                <th>Zona</th>
+                                <th>Día</th>
+                                <th>Fecha Asignación</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tBodyAsignaciones"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="recuadroAlert" class="alert alert-danger d-none" role="alert"></div>
+    <!-- Pop-up (dialog) crear asignacion -->
+    <dialog id="dialogCrearAsignacion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
+        <h4 class="text-gradient-success text-center mb-4">Crear asignación</h4>
 
-    <!-- Pop-up (dialog) asignaciones -->
-    <dialog id="dialogAsignacion" class="rounded-4 p-4 bg-dark text-light shadow-lg">
-        <h4 class="text-gradient-success text-center mb-4">Asignar Camión a Ruta</h4>
+        <form id="formCrearAsignacion">
+            <div class="mb-3">
+                <label for="camionCrear" class="form-label">Camión</label>
+                <select id="camionCrear" class="form-control form-control-dark" required>
+                    <option value="">Seleccionar camión...</option>
+                </select>
+            </div>
 
-<!--        <p class="mb-3"><strong>Camion:</strong> <span id="nombreCamionAsignarMedico"></span></p>-->
+            <div class="mb-3">
+                <label for="rutaCrear" class="form-label">Ruta</label>
+                <select id="rutaCrear" class="form-control form-control-dark" required>
+                    <option value="">Seleccionar ruta...</option>
+                </select>
+            </div>
 
-<!--        <form id="formAsignarCamion">-->
-<!--            <input type="hidden" id="idCamionAsignar">-->
+            <div id="msgCrearError" class="alert alert-danger d-none" role="alert"></div>
 
-<!--            <div class="">-->
-<!--                <label class="form-label">Seleccionar ca:</label>-->
-<!--                <div id="radioMedicosDiv" class="d-flex flex-column gap-2">-->
-<!--                    &lt;!&ndash; Input tipo radio dínámico que obtiene los médicos disponibles de la base de datos con js &ndash;&gt;-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div id="msgDialogMedicoError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>-->
-
-<!--            <div class="d-flex justify-content-center gap-2 mt-4">-->
-<!--                <button type="button" class="btn btn-outline-gradient-primary"-->
-<!--                        onclick="document.getElementById('dialogAsignarMedico').close()">Cancelar</button>-->
-<!--                <button type="submit" class="btn btn-gradient-primary px-4">Guardar</button>-->
-<!--            </div>-->
-<!--        </form>-->
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <button type="button" class="btn btn-outline-gradient-primary"
+                    onclick="document.getElementById('dialogCrearAsignacion').close()">Cancelar</button>
+                <button type="submit" class="btn btn-gradient-primary px-4 fs-5">Crear</button>
+            </div>
+        </form>
     </dialog>
 
-
-<script src="/js/ADMIN/asignacionesAdmin.js.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js"></script>
+    <script src="/js/ADMIN/asignacionesAdmin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js"></script>
 
 </body>
+
 </html>

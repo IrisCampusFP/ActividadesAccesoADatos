@@ -145,11 +145,6 @@ public class UsuarioService {
         return toDTOList(usuarioRepository.findByActivoTrue());
     }
 
-    // Obtener todos los médicos (usuarios con rol MEDICO)
-    @Transactional(readOnly = true)
-    public List<UsuarioDTO> obtenerUsuariosMedico() {
-        return toDTOList(usuarioRepository.obtenerUsuariosMedico());
-    }
 
     // UPDATE
 
